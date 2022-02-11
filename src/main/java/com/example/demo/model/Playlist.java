@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,8 +22,10 @@ public class Playlist {
     @Column
     private String name;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
+
 
     @OneToMany
     private List<Video> videoList;

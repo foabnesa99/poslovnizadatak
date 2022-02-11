@@ -7,7 +7,7 @@ import com.example.demo.model.User;
 
 import java.util.List;
 
-public interface PlaylistService {
+public interface PlaylistVideoService {
 
     Playlist findOne(String playlistId);
 
@@ -17,12 +17,12 @@ public interface PlaylistService {
 
     void remove(String playlistId);
 
-    Playlist VideoSort(String playlistId);
+    Playlist videoSort(String playlistId);
 
-    Playlist AddVideo(String playlistId, String videoId);
+    Playlist addVideo(String playlistId, String videoId);
 
-    Playlist RemoveVideo(String playlistId ,String videoId);
+    Playlist removeVideo(String playlistId ,String videoId);
 
-    Playlist VideoIndex(String playlistId, Integer currentIndex, Integer newIndex);
+    Playlist videoIndex(String playlistId, Integer currentIndex, Integer newIndex);
 
 }
