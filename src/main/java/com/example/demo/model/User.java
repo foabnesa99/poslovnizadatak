@@ -1,15 +1,15 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @Entity
 @Table
@@ -22,11 +22,29 @@ public class User {
     @Column
     private String name;
 
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    private List<Playlist> playlists;
+
     @OneToOne
     Channel channel;
 
-    @OneToMany(mappedBy = "user")
-    private List<Playlist> playlists;
+    public User(String name, List<Playlist> playlists, Channel channel) {
+        this.name = name;
+        this.playlists = playlists;
+        this.channel = channel;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

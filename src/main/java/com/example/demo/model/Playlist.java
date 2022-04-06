@@ -2,13 +2,16 @@ package com.example.demo.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @Table
 @Entity
@@ -26,10 +29,31 @@ public class Playlist {
     @ManyToOne
     private User user;
 
+    public Playlist(String name, User user, List<Video> videoList, List<Category> categories) {
+        this.name = name;
+        this.user = user;
+        this.videoList = videoList;
+        this.categories = categories;
+    }
 
     @OneToMany
+    @ToString.Exclude
     private List<Video> videoList;
 
     @OneToMany
+    @ToString.Exclude
     private List<Category> categories;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Playlist playlist = (Playlist) o;
+        return id != null && Objects.equals(id, playlist.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
