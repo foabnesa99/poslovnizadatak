@@ -4,6 +4,7 @@ package com.example.demo.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,4 +19,7 @@ public class Video {
 
     @Column
     private String name;
+
+    @OneToMany
+    private List<Category> categories;
 }

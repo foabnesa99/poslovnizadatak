@@ -1,18 +1,16 @@
 package com.example.demo.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
-@Table
 @Entity
-public class Playlist {
+@Table
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +20,4 @@ public class Playlist {
     @Column
     private String name;
 
-    @JsonIgnore
-    @ManyToOne
-    private User user;
-
-
-    @OneToMany
-    private List<Video> videoList;
-
-    @OneToMany
-    private List<Category> categories;
 }

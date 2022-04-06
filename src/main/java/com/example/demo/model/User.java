@@ -22,6 +22,8 @@ public class User {
     @Column
     private String name;
 
+    @OneToOne
+    Channel channel;
 
     @OneToMany(mappedBy = "user")
     private List<Playlist> playlists;
