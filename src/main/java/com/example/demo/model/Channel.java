@@ -25,7 +25,9 @@ public class Channel {
     @ToString.Exclude
     private List<Playlist> playlistList;
 
-
+    public Channel(List<Playlist> playlistList) {
+        this.playlistList = playlistList;
+    }
 
     @Override
     public boolean equals(Object o) {

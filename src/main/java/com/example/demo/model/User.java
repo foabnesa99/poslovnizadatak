@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,6 +26,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private List<Playlist> playlists;
+
 
     @OneToOne
     Channel channel;

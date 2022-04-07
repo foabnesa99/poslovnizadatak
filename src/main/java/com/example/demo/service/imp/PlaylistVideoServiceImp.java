@@ -2,6 +2,8 @@ package com.example.demo.service.imp;
 
 import com.example.demo.model.Playlist;
 import com.example.demo.model.Video;
+import com.example.demo.model.VideoPlaylistOrder;
+import com.example.demo.model.dto.PlaylistSortedDTO;
 import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.repo.VideoRepo;
 import com.example.demo.service.PlaylistVideoService;
@@ -45,7 +47,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     }
 
     @Override
-    public Playlist videoSort(String playlistId) {
+    public List<VideoPlaylistOrder> videoSort(String playlistId) {
         Optional<Playlist> playlist = playlistRepo.findById(playlistId);
         if (playlist.isEmpty()) {
             throw new ResourceMissingException();
@@ -54,9 +56,10 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
         playlist.ifPresent(name ->
                 Collections.sort(playlist.get().getVideoList(), Comparator.comparing(Video::getName))
         );
-        videoPlaylistOrderService.sortedVideoList(playlist.get());
 
-        return playlistRepo.save(playlist.get());
+        playlistRepo.save(playlist.get());
+
+        return videoPlaylistOrderService.sortedVideoList(playlist.get());
     }
 
 

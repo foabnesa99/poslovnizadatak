@@ -4,6 +4,8 @@ import com.example.demo.model.Playlist;
 
 import com.example.demo.model.Video;
 import com.example.demo.model.User;
+import com.example.demo.model.VideoPlaylistOrder;
+import com.example.demo.model.dto.PlaylistSortedDTO;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public interface PlaylistVideoService {
 
     void remove(String playlistId);
 
-    Playlist videoSort(String playlistId);
+    List<VideoPlaylistOrder> videoSort(String playlistId);
 
     Playlist addVideo(String playlistId, String videoId);
 

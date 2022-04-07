@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Category;
 import com.example.demo.model.Playlist;
+import com.example.demo.model.VideoPlaylistOrder;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import io.swagger.annotations.Api;
@@ -10,6 +12,8 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(value = "Playlist Rest Controller", description = "REST API for playlists")
 @RestController
@@ -24,6 +28,17 @@ public class PlaylistController {
         this.playlistVideoService = playlistVideoService;
     }
 
+    @ApiOperation(value = "Get a list of all playlists", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful | OK")
+    }
+    )
+    @GetMapping(value = "/")
+    public ResponseEntity<List<Playlist>> getPlaylists() {
+        List<Playlist> playlistList = playlistVideoService.findAll();
+        return new ResponseEntity<>(playlistList, HttpStatus.OK);
+    }
+
 
     @RequestMapping(path = "/{playlistid}/sort", method = RequestMethod.PUT)
     @ApiOperation(value = "Sort a playlist ", response = ResponseEntity.class)
@@ -33,14 +48,14 @@ public class PlaylistController {
             @ApiResponse(code = 404, message = "Not Found!") })
     public ResponseEntity playlistSort(@PathVariable String playlistid) {
         try {
-            Playlist playlist = playlistVideoService.videoSort(playlistid);
-            return new ResponseEntity<Playlist>(playlist, HttpStatus.OK);
+            List<VideoPlaylistOrder> playlist = playlistVideoService.videoSort(playlistid);
+            return new ResponseEntity<>(playlist, HttpStatus.OK);
         } catch (ResourceMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
+        } /*catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
-        }
+        }*/
 
     }
     @ApiOperation(value = "Removing a video from a playlist", response = ResponseEntity.class)

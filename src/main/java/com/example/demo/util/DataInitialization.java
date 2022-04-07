@@ -38,13 +38,15 @@ public class DataInitialization implements ApplicationRunner {
         Category category1 = new Category("Thriller");
         Category category2 = new Category( "Comedy");
         Category category3 = new Category("Action");
+        Category category4 = new Category("Horror");
 
         categoryRepo.save(category1);
         categoryRepo.save(category2);
         categoryRepo.save(category3);
+        categoryRepo.save(category4);
 
         List<Category> categories = new ArrayList<>();
-
+        List<Category> categories4 = new ArrayList<Category>(Arrays.asList(category4));
         categories.add(category1);
         categories.add(category2);
 
@@ -55,23 +57,23 @@ public class DataInitialization implements ApplicationRunner {
         List<Category> categories3 = new ArrayList<>();
         categories3.add(category2);
 
-        Video video1 = new Video("A Video macka", categories);
+        Video video1 = new Video("Z Video macka", categories);
         Video video2 = new Video("D Video pas", categories2);
-        Video video3 = new Video("E Video petao", categories3);
+        Video video3 = new Video("E Video petao", categories4);
         //Video video4 = new Video("4", "C Video gameplay", new ArrayList<Category>(Arrays.asList(category1, category3)));
 
 
 
         videoRepo.save(video1);
         videoRepo.save(video2);
-        //videoRepo.save(video3);
+        videoRepo.save(video3);
         //videoRepo.save(video4);
 
 
         List<Video> plejlistaVideo = new ArrayList<Video>();
         plejlistaVideo.add(video1);
         plejlistaVideo.add(video2);
-       // plejlistaVideo.add(video3);
+        plejlistaVideo.add(video3);
 
         plejlista1.setVideoList(plejlistaVideo);
         plejlista1.setName("Perina prva plejlista");
