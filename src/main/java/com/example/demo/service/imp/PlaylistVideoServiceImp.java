@@ -5,6 +5,7 @@ import com.example.demo.model.Video;
 import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.repo.VideoRepo;
 import com.example.demo.service.PlaylistVideoService;
+import com.example.demo.service.VideoPlaylistOrderService;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     @Autowired
     PlaylistRepo playlistRepo;
+
+    @Autowired
+    VideoPlaylistOrderService videoPlaylistOrderService;
 
     @Autowired
     VideoRepo videoRepo;
@@ -49,8 +53,8 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
         playlist.ifPresent(name ->
                 Collections.sort(playlist.get().getVideoList(), Comparator.comparing(Video::getName))
-
         );
+        videoPlaylistOrderService.sortedVideoList(playlist.get());
 
         return playlistRepo.save(playlist.get());
     }

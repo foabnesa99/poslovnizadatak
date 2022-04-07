@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(value = "Playlist Rest Controller", description = "REST API for playlists")
+@Api(value = "Users Rest Controller", description = "REST API for users")
 @RestController
 @RequestMapping(value = "/api/users")
 public class UserController {

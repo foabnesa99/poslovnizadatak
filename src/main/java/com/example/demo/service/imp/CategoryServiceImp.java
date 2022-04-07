@@ -1,12 +1,15 @@
 package com.example.demo.service.imp;
 
 import com.example.demo.model.Category;
+import com.example.demo.model.User;
 import com.example.demo.repo.CategoryRepo;
 import com.example.demo.service.CategoryService;
+import com.example.demo.util.exceptions.ResourceMissingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImp implements CategoryService {
@@ -16,7 +19,13 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public Category findOne(String categoryId) {
-        return categoryRepo.getById(categoryId);
+
+        Optional<Category> cat = categoryRepo.findById(categoryId);
+        if (cat.isEmpty()) {
+            throw new ResourceMissingException();
+        }
+        return cat.get();
+
     }
 
     @Override
