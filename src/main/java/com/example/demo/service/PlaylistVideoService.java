@@ -21,10 +21,12 @@ public interface PlaylistVideoService {
 
     List<VideoPlaylistOrder> videoSort(String playlistId);
 
-    Playlist addVideo(String playlistId, String videoId);
+    List<VideoPlaylistOrder>  videoSortByName(String playlistId);
 
-    Playlist removeVideo(String playlistId ,String videoId);
+    void removeVideoFromPlaylist (String playlistId, String videoId);
 
-    Playlist videoIndex(String playlistId, Integer currentIndex, Integer newIndex);
+    Playlist checkIfExists(String playlistId);
+
+    List<VideoPlaylistOrder> videoIndex(String playlistId, String videoId, Integer newIndex);
 
 }

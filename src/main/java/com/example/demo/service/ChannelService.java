@@ -14,4 +14,8 @@ public interface ChannelService {
     Channel save(Channel channel);
 
     void remove(String channelId);
+
+    Channel addPlaylist(String channelId, String playlistId);
+
+    Channel removePlaylist(String channelId, String playlistId);
 }

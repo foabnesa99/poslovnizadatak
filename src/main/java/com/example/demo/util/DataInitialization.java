@@ -60,38 +60,50 @@ public class DataInitialization implements ApplicationRunner {
         Video video1 = new Video("Z Video macka", categories);
         Video video2 = new Video("D Video pas", categories2);
         Video video3 = new Video("E Video petao", categories4);
-        //Video video4 = new Video("4", "C Video gameplay", new ArrayList<Category>(Arrays.asList(category1, category3)));
+        Video video4 = new Video("C Video gameplay", new ArrayList<>(Arrays.asList(category2, category3)));
+        Video video5 = new Video("T Sjajan video macke kako pada u vodu", new ArrayList<>(Arrays.asList(category1, category3)));
+        Video video6 = new Video("B Video kako se penje lik", new ArrayList<>(Arrays.asList(category1, category4)));
 
 
 
         videoRepo.save(video1);
         videoRepo.save(video2);
         videoRepo.save(video3);
-        //videoRepo.save(video4);
+        videoRepo.save(video4);
+        videoRepo.save(video5);
+        videoRepo.save(video6);
 
 
-        List<Video> plejlistaVideo = new ArrayList<Video>();
+        List<Video> plejlistaVideo = new ArrayList<>();
         plejlistaVideo.add(video1);
         plejlistaVideo.add(video2);
         plejlistaVideo.add(video3);
+        plejlistaVideo.add(video4);
+        plejlistaVideo.add(video5);
+        plejlistaVideo.add(video6);
 
-        plejlista1.setVideoList(plejlistaVideo);
         plejlista1.setName("Perina prva plejlista");
         plejlista1.setCategories(new ArrayList<>(Arrays.asList(category1)));
         playlistRepo.save(plejlista1);
+
+        plejlista2.setName("Perina druga plejlista");
+
 
         List<Playlist> plejlistakorisnik1 = new ArrayList<Playlist>();
         plejlistakorisnik1.add(plejlista1);
 
         Channel channel1 = new Channel();
+        Channel channel2 = new Channel();
 
-        User korisnik1 = new User("Petar Petrovic",plejlistakorisnik1, channel1);
-        channel1.setId("1");
-        channel1.setPlaylistList(plejlistakorisnik1);
+        User korisnik1 = new User("Petar Petrovic",channel1);
+        channel1.setName("Perin Super Awesome kanal");
+
+        User korisnik2 = new User("Dragan Milovanovic", channel2);
+        channel2.setName("Dragcetov gameplay");
+
+        channelRepo.save(channel2);
         channelRepo.save(channel1);
         userRepository.save(korisnik1);
-
-        plejlista1.setUser(korisnik1);
-        playlistRepo.save(plejlista1);
+        userRepository.save(korisnik2);
     }
 }

@@ -23,17 +23,14 @@ public class User {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "user")
-    @ToString.Exclude
-    private List<Playlist> playlists;
+
 
 
     @OneToOne
     Channel channel;
 
-    public User(String name, List<Playlist> playlists, Channel channel) {
+    public User(String name, Channel channel) {
         this.name = name;
-        this.playlists = playlists;
         this.channel = channel;
     }
 

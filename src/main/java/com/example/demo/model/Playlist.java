@@ -25,22 +25,19 @@ public class Playlist {
     @Column
     private String name;
 
-    @JsonIgnore
     @ManyToOne
-    private User user;
+    @JsonIgnore
+    Channel channel;
 
-    public Playlist(String name, User user, List<Video> videoList, List<Category> categories) {
+    @OneToMany
+    List<VideoPlaylistOrder> videoPlaylistOrders;
+
+    public Playlist(String name, List<Category> categories) {
         this.name = name;
-        this.user = user;
-        this.videoList = videoList;
         this.categories = categories;
     }
 
-    @OneToMany
-    @ToString.Exclude
-    private List<Video> videoList;
-
-    @OneToMany
+    @ManyToMany
     @ToString.Exclude
     private List<Category> categories;
 

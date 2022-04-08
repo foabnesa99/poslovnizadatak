@@ -6,6 +6,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -21,6 +22,11 @@ public class Category {
     @Column
     private String id;
 
+    @ManyToMany
+    private List<Playlist> playlistList;
+
+    @ManyToMany
+    private List<Video> videoList;
 
     @Column
     private String name;

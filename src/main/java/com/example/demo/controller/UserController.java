@@ -92,7 +92,6 @@ public class UserController {
             User user = userService.findOne(id.toString());
             user.setChannel(editedUser.getChannel());
             user.setName(editedUser.getName());
-            user.setPlaylists(editedUser.getPlaylists());
             userService.save(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
 

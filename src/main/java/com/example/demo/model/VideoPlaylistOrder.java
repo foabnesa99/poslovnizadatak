@@ -17,10 +17,10 @@ public class VideoPlaylistOrder {
     @Column
     private String id;
 
-    @OneToOne
+    @ManyToOne
     private Video video;
 
-    @OneToOne
+    @ManyToOne
     private Playlist playlist;
 
     private Integer orderNumber;

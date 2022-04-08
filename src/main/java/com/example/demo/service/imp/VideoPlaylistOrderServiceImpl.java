@@ -20,14 +20,7 @@ public class VideoPlaylistOrderServiceImpl implements VideoPlaylistOrderService 
     public List<VideoPlaylistOrder> sortedVideoList(Playlist playlist) {
 
 
-        for(Video v : playlist.getVideoList()){
-            VideoPlaylistOrder videoPlaylistOrder = new VideoPlaylistOrder();
-            videoPlaylistOrder.setPlaylist(playlist);
-            videoPlaylistOrder.setVideo(v);
-            videoPlaylistOrder.setOrderNumber(playlist.getVideoList().indexOf(v));
 
-            videoPlaylistOrderRepo.save(videoPlaylistOrder);
-        }
-        return videoPlaylistOrderRepo.getVideoPlaylistsOrderByPlaylist_Id(playlist.getId());
+        return videoPlaylistOrderRepo.getVideoPlaylistsOrdersByPlaylist_Id(playlist.getId());
     }
 }

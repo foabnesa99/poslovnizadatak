@@ -25,8 +25,14 @@ public class Channel {
     @ToString.Exclude
     private List<Playlist> playlistList;
 
-    public Channel(List<Playlist> playlistList) {
-        this.playlistList = playlistList;
+    private String name;
+
+    @OneToOne
+    User user;
+
+    public Channel(String name, User user) {
+        this.name = name;
+        this.user = user;
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Category;
 import com.example.demo.model.Playlist;
 import com.example.demo.model.VideoPlaylistOrder;
 import com.example.demo.service.PlaylistVideoService;
+import com.example.demo.service.VideoService;
+import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.ResourceMissingException;
+import com.example.demo.util.exceptions.VideoMissingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,11 +23,14 @@ import java.util.List;
 public class PlaylistController {
 
 
-   private PlaylistVideoService playlistVideoService;
+   private final PlaylistVideoService playlistVideoService;
+
+   private final VideoService videoService;
 
 
-    public PlaylistController(PlaylistVideoService playlistVideoService) {
+    public PlaylistController(PlaylistVideoService playlistVideoService, VideoService videoService) {
         this.playlistVideoService = playlistVideoService;
+        this.videoService = videoService;
     }
 
     @ApiOperation(value = "Get a list of all playlists", response = ResponseEntity.class)
@@ -50,12 +55,14 @@ public class PlaylistController {
         try {
             List<VideoPlaylistOrder> playlist = playlistVideoService.videoSort(playlistid);
             return new ResponseEntity<>(playlist, HttpStatus.OK);
-        } catch (ResourceMissingException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } /*catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (PlaylistMissingException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
-        }*/
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
     @ApiOperation(value = "Removing a video from a playlist", response = ResponseEntity.class)
@@ -66,7 +73,7 @@ public class PlaylistController {
     @RequestMapping(path = "/{playlistid}/videos/delete/{videoid}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeVideo(@PathVariable int playlistid, @PathVariable int videoid) {
         try {
-            playlistVideoService.removeVideo(Integer.toString(playlistid), Integer.toString(videoid));
+            playlistVideoService.removeVideoFromPlaylist(Integer.toString(playlistid), Integer.toString(videoid));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ResourceMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -84,8 +91,8 @@ public class PlaylistController {
     public ResponseEntity<?> addVideo(@PathVariable int playlistid, @PathVariable int videoid) {
 
         try {
-            Playlist playlist = playlistVideoService.addVideo(Integer.toString(playlistid), Integer.toString(videoid));
-            return new ResponseEntity<Playlist>(playlist, HttpStatus.OK);
+            Playlist playlist = videoService.addVideoToPlaylist(Integer.toString(videoid), Integer.toString(playlistid));
+            return new ResponseEntity<>(playlist, HttpStatus.OK);
         } catch (ResourceMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -94,26 +101,26 @@ public class PlaylistController {
         }
     }
 
+
     @ApiOperation(value = "Change the position of a video in a playlist", response = ResponseEntity.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success|OK"),
             @ApiResponse(code = 403, message = "Internal server error"),
             @ApiResponse(code = 404, message = "Not Found!") })
-    @RequestMapping(path = "{playlistid}/videos/{currentIndex}/to/{newIndex}", method = RequestMethod.PATCH)
-    public ResponseEntity<?> positionUpdate(@PathVariable int id, @PathVariable int currentIndex, @PathVariable int newIndex) {
-
+    @RequestMapping(path = "{playlistid}/videos/{videoId}/to/{newIndex}", method = RequestMethod.PATCH)
+    public ResponseEntity<?> positionUpdate(@PathVariable int playlistid, @PathVariable int videoId, @PathVariable int newIndex) {
         try {
-            Playlist playlist = playlistVideoService.videoIndex(Integer.toString(id), currentIndex, newIndex);
-            return new ResponseEntity<Playlist>(playlist, HttpStatus.OK);
+            List<VideoPlaylistOrder> playlist = playlistVideoService.videoIndex(Integer.toString(playlistid), Integer.toString(videoId), newIndex);
+            return new ResponseEntity<>(playlist, HttpStatus.OK);
         } catch (ResourceMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        catch (IndexOutOfBoundsException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       catch (IndexOutOfBoundsException e) {
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         }
         catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
     }
