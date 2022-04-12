@@ -29,7 +29,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Override
     public List<PlaylistChannelOrder> playlistSort(String channelId) {
-        Channel channel = channelService.checkIfExists(channelId);
+        Channel channel = channelService.getChannel(channelId);
 
         Comparator<PlaylistChannelOrder> orderNumber = Comparator.comparing(PlaylistChannelOrder::getOrderNumber);
 
@@ -43,9 +43,9 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
     @Override
     public void removePlaylistFromChannel(String channelId, String playlistId) {
 
-        Playlist playlist = playlistService.checkIfExists(playlistId);
+        Playlist playlist = playlistService.getPlaylist(playlistId);
 
-        Channel channel = channelService.checkIfExists(channelId);
+        Channel channel = channelService.getChannel(channelId);
 
         Optional<PlaylistChannelOrder> playlistChannelOrder = channelPlaylistRepo.getPlaylistChannelOrderByChannelAndPlaylist(channel, playlist);
 
@@ -56,9 +56,9 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Override
     public List<PlaylistChannelOrder> playlistIndex(String channelId, String playlistId, Integer newIndex) {
-        Channel channel = channelService.checkIfExists(channelId);
+        Channel channel = channelService.getChannel(channelId);
 
-        Playlist playlist = playlistService.checkIfExists(playlistId);
+        Playlist playlist = playlistService.getPlaylist(playlistId);
 
         Optional<PlaylistChannelOrder> foundPlaylist = channelPlaylistRepo.getPlaylistChannelOrderByChannelAndPlaylist(channel, playlist);
 
@@ -117,9 +117,9 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Override
     public PlaylistChannelOrder addPlaylistToChannel(String channelId, String playlistId) {
-        Playlist playlist = playlistService.checkIfExists(playlistId);
+        Playlist playlist = playlistService.getPlaylist(playlistId);
 
-        Channel channel = channelService.checkIfExists(channelId);
+        Channel channel = channelService.getChannel(channelId);
 
         PlaylistChannelOrder playlistChannelOrder = new PlaylistChannelOrder();
 

@@ -17,11 +17,6 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistRepo playlistRepo;
 
     @Override
-    public Playlist findOne(String playlistId) {
-        return checkIfExists(playlistId);
-    }
-
-    @Override
     public List<Playlist> findAll() {
         return playlistRepo.findAll();
     }
@@ -34,11 +29,11 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public void remove(String playlistId) {
 
-        playlistRepo.deleteById(checkIfExists(playlistId).getId());
+        playlistRepo.deleteById(getPlaylist(playlistId).getId());
     }
 
     @Override
-    public Playlist checkIfExists(String playlistId) {
+    public Playlist getPlaylist(String playlistId) {
         Optional<Playlist> playlist = playlistRepo.findById(playlistId);
         if (playlist.isEmpty()) {
             throw new PlaylistMissingException();

@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface PlaylistService {
 
-    Playlist findOne(String playlistId);
 
     List<Playlist> findAll();
 
@@ -14,5 +13,5 @@ public interface PlaylistService {
 
     void remove(String playlistId);
 
-    Playlist checkIfExists(String playlistId);
+    Playlist getPlaylist(String playlistId);
 }

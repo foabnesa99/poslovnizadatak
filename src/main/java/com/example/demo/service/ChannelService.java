@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface ChannelService {
 
-    Channel findOne(String channelId);
 
     List<Channel> findAll();
 
@@ -15,5 +14,5 @@ public interface ChannelService {
 
     void remove(String channelId);
 
-    Channel checkIfExists(String channelId);
+    Channel getChannel(String channelId);
 }

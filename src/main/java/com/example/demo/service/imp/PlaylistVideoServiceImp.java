@@ -8,12 +8,9 @@ import com.example.demo.repo.VideoPlaylistOrderRepo;
 import com.example.demo.repo.VideoRepo;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
-import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import com.example.demo.util.exceptions.VideoMissingException;
 import com.example.demo.util.exceptions.VideoNotInPlaylistException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +36,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     @Override
     public List<VideoPlaylistOrder> videoSort(String playlistId) {
-        Playlist playlist = playlistService.checkIfExists(playlistId);
+        Playlist playlist = playlistService.getPlaylist(playlistId);
 
         Comparator<VideoPlaylistOrder> orderNumber = Comparator.comparing(VideoPlaylistOrder::getOrderNumber);
 
@@ -52,7 +49,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     @Override
     public List<VideoPlaylistOrder> videoSortByName(String playlistId) {
-        Playlist playlist = playlistService.checkIfExists(playlistId);
+        Playlist playlist = playlistService.getPlaylist(playlistId);
         Comparator<VideoPlaylistOrder> orderNumber = Comparator.comparing(o -> o.getVideo().getName());
 
 
@@ -90,7 +87,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
         Optional<Video> video = videoRepo.findById(videoId);
 
-        Playlist playlist = playlistService.checkIfExists(playlistId);
+        Playlist playlist = playlistService.getPlaylist(playlistId);
 
         if(video.isEmpty()) throw new VideoMissingException();
 

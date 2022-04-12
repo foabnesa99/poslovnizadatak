@@ -10,6 +10,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor
 @Table
 public class PlaylistChannelOrder {

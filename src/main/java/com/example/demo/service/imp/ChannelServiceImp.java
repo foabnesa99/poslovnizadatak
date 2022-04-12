@@ -29,11 +29,6 @@ public class ChannelServiceImp implements ChannelService {
     PlaylistRepo playlistRepo;
 
     @Override
-    public Channel findOne(String channelId) {
-        return channelRepo.getById(channelId);
-    }
-
-    @Override
     public List<Channel> findAll() {
         return channelRepo.findAll();
     }
@@ -49,7 +44,7 @@ public class ChannelServiceImp implements ChannelService {
     }
 
     @Override
-    public Channel checkIfExists(String channelId) {
+    public Channel getChannel(String channelId) {
         Optional<Channel> channel = channelRepo.findById(channelId);
         if (channel.isEmpty()) {
             throw new PlaylistMissingException();
