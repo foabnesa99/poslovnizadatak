@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.model.User;
 import com.example.demo.model.Video;
 import com.example.demo.service.VideoService;
 import com.example.demo.util.exceptions.ResourceMissingException;

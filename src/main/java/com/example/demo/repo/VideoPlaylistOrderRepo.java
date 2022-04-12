@@ -19,4 +19,6 @@ public interface VideoPlaylistOrderRepo extends JpaRepository<VideoPlaylistOrder
     VideoPlaylistOrder getVideoPlaylistOrderByVideo(Video video);
 
     Optional<VideoPlaylistOrder> getVideoPlaylistOrderByPlaylistAndVideo(Playlist playlist, Video video);
+
+    List<VideoPlaylistOrder> getVideoPlaylistOrdersByPlaylistAndVideo(Playlist playlist, Video video);
 }

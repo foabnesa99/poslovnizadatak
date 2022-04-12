@@ -6,10 +6,12 @@ import com.example.demo.model.VideoPlaylistOrder;
 import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.repo.VideoPlaylistOrderRepo;
 import com.example.demo.repo.VideoRepo;
+import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import com.example.demo.util.exceptions.VideoMissingException;
+import com.example.demo.util.exceptions.VideoNotInPlaylistException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,29 +32,14 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     @Autowired
     VideoRepo videoRepo;
 
-    @Override
-    public Playlist findOne(String playlistId) {
-        return playlistRepo.getById(playlistId);
-    }
+    @Autowired
+    PlaylistService playlistService;
 
-    @Override
-    public List<Playlist> findAll() {
-        return playlistRepo.findAll();
-    }
 
-    @Override
-    public Playlist save(Playlist playlist) {
-        return playlistRepo.save(playlist);
-    }
-
-    @Override
-    public void remove(String playlistId) {
-        playlistRepo.deleteById(playlistId);
-    }
 
     @Override
     public List<VideoPlaylistOrder> videoSort(String playlistId) {
-        Playlist playlist = checkIfExists(playlistId);
+        Playlist playlist = playlistService.checkIfExists(playlistId);
 
         Comparator<VideoPlaylistOrder> orderNumber = Comparator.comparing(VideoPlaylistOrder::getOrderNumber);
 
@@ -65,7 +52,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     @Override
     public List<VideoPlaylistOrder> videoSortByName(String playlistId) {
-        Playlist playlist = checkIfExists(playlistId);
+        Playlist playlist = playlistService.checkIfExists(playlistId);
         Comparator<VideoPlaylistOrder> orderNumber = Comparator.comparing(o -> o.getVideo().getName());
 
 
@@ -94,42 +81,28 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     }
 
-    @Override
-    public Playlist checkIfExists(String playlistId) {
-        Optional<Playlist> playlist = playlistRepo.findById(playlistId);
-        if (playlist.isEmpty()) {
-            throw new PlaylistMissingException();
-        }
-        return playlist.get();
-    }
+
 
 
     @Override
     public List<VideoPlaylistOrder> videoIndex(String playlistId, String videoId, Integer newIndex) {
 
-        Logger logger = LogManager.getLogger();
 
         Optional<Video> video = videoRepo.findById(videoId);
 
-        logger.error("OVO JE VIDEO" + video.get());
-
-        VideoPlaylistOrder foundVideoPlaylist = videoPlaylistOrderRepo.getVideoPlaylistOrderByVideo(video.get());
-
-        logger.error("OVO JE FOUNDVIDEOPLAYLIST" + foundVideoPlaylist);
-
-
+        Playlist playlist = playlistService.checkIfExists(playlistId);
 
         if(video.isEmpty()) throw new VideoMissingException();
 
-        Playlist playlist = checkIfExists(playlistId);
+        Optional<VideoPlaylistOrder> foundVideoPlaylist = videoPlaylistOrderRepo.getVideoPlaylistOrderByPlaylistAndVideo(playlist, video.get());
+
+        if(foundVideoPlaylist.isEmpty()){
+            throw new VideoNotInPlaylistException();
+        }
 
         List<VideoPlaylistOrder> playlists = videoPlaylistOrderRepo.getVideoPlaylistOrdersByPlaylist(playlist);
 
-        logger.error("OVO JE PLEJLISTA" + playlists.toString());
-
         Integer indexOfVideo = playlists.indexOf(foundVideoPlaylist);
-
-        logger.error("OVO JE INDEX VIDEA" + indexOfVideo);
 
         VideoPlaylistOrder foundVideo = playlists.get(indexOfVideo);
 

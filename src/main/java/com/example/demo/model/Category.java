@@ -22,9 +22,11 @@ public class Category {
     @Column
     private String id;
 
+    @ToString.Exclude
     @ManyToMany
     private List<Playlist> playlistList;
 
+    @ToString.Exclude
     @ManyToMany
     private List<Video> videoList;
 

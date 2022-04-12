@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 
 import com.example.demo.model.Channel;
+import com.example.demo.model.PlaylistChannelOrder;
+import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.ChannelService;
 import com.example.demo.util.exceptions.ChannelMissingException;
 import com.example.demo.util.exceptions.PlaylistNotInChannelException;
@@ -23,8 +25,11 @@ public class ChannelController {
 
     private final ChannelService channelService;
 
-    public ChannelController(ChannelService channelService) {
+    private final ChannelPlaylistService channelPlaylistService;
+
+    public ChannelController(ChannelService channelService, ChannelPlaylistService channelPlaylistService) {
         this.channelService = channelService;
+        this.channelPlaylistService = channelPlaylistService;
     }
 
     @ApiOperation(value = "Get a list of all channels", response = ResponseEntity.class)
@@ -46,7 +51,7 @@ public class ChannelController {
     @RequestMapping(path = "/{channelid}/playlists/delete/{playlistid}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removePlaylist(@PathVariable int channelid, @PathVariable int playlistid) {
         try {
-            channelService.removePlaylist(Integer.toString(channelid), Integer.toString(playlistid));
+            channelPlaylistService.removePlaylistFromChannel(Integer.toString(channelid), Integer.toString(playlistid));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ResourceMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -64,8 +69,8 @@ public class ChannelController {
     public ResponseEntity<?> addPlaylist(@PathVariable int channelid, @PathVariable int playlistid) {
 
         try {
-            Channel channel = channelService.addPlaylist(Integer.toString(channelid), Integer.toString(playlistid));
-            return new ResponseEntity<>(channel, HttpStatus.OK);
+            PlaylistChannelOrder playlistChannelOrder = channelPlaylistService.addPlaylistToChannel(Integer.toString(channelid), Integer.toString(playlistid));
+            return new ResponseEntity<>(playlistChannelOrder, HttpStatus.OK);
         } catch (PlaylistNotInChannelException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {

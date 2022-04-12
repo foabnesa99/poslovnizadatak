@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Playlist;
 import com.example.demo.model.VideoPlaylistOrder;
+import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
 import com.example.demo.util.exceptions.PlaylistMissingException;
@@ -27,10 +28,13 @@ public class PlaylistController {
 
    private final VideoService videoService;
 
+   private final PlaylistService playlistService;
 
-    public PlaylistController(PlaylistVideoService playlistVideoService, VideoService videoService) {
+
+    public PlaylistController(PlaylistVideoService playlistVideoService, VideoService videoService, PlaylistService playlistService) {
         this.playlistVideoService = playlistVideoService;
         this.videoService = videoService;
+        this.playlistService = playlistService;
     }
 
     @ApiOperation(value = "Get a list of all playlists", response = ResponseEntity.class)
@@ -40,7 +44,7 @@ public class PlaylistController {
     )
     @GetMapping(value = "/")
     public ResponseEntity<List<Playlist>> getPlaylists() {
-        List<Playlist> playlistList = playlistVideoService.findAll();
+        List<Playlist> playlistList = playlistService.findAll();
         return new ResponseEntity<>(playlistList, HttpStatus.OK);
     }
 

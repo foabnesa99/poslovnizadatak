@@ -23,6 +23,7 @@ public class Video {
     @Column
     private String name;
 
+    @ToString.Exclude
     @OneToMany
     List<VideoPlaylistOrder> videoPlaylistOrders;
 

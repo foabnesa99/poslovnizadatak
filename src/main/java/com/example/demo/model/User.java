@@ -25,7 +25,7 @@ public class User {
 
 
 
-
+    @ToString.Exclude
     @OneToOne
     Channel channel;
 

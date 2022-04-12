@@ -11,21 +11,13 @@ import java.util.List;
 
 public interface PlaylistVideoService {
 
-    Playlist findOne(String playlistId);
 
-    List<Playlist> findAll();
-
-    Playlist save(Playlist playlist);
-
-    void remove(String playlistId);
 
     List<VideoPlaylistOrder> videoSort(String playlistId);
 
     List<VideoPlaylistOrder>  videoSortByName(String playlistId);
 
     void removeVideoFromPlaylist (String playlistId, String videoId);
-
-    Playlist checkIfExists(String playlistId);
 
     List<VideoPlaylistOrder> videoIndex(String playlistId, String videoId, Integer newIndex);
 

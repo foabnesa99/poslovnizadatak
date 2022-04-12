@@ -25,10 +25,11 @@ public class Playlist {
     @Column
     private String name;
 
-    @ManyToOne
-    @JsonIgnore
-    Channel channel;
+    @ToString.Exclude
+    @OneToMany
+    private List<PlaylistChannelOrder> playlistChannelOrders;
 
+    @ToString.Exclude
     @OneToMany
     List<VideoPlaylistOrder> videoPlaylistOrders;
 
