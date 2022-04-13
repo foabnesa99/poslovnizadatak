@@ -20,19 +20,19 @@ import java.util.stream.Collectors;
 @Service
 public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
-    @Autowired
-    PlaylistRepo playlistRepo;
+   private final PlaylistRepo playlistRepo;
 
-    @Autowired
-    VideoPlaylistOrderRepo videoPlaylistOrderRepo;
+    private final VideoPlaylistOrderRepo videoPlaylistOrderRepo;
+    private final VideoRepo videoRepo;
 
-    @Autowired
-    VideoRepo videoRepo;
+    private final PlaylistService playlistService;
 
-    @Autowired
-    PlaylistService playlistService;
-
-
+    public PlaylistVideoServiceImp(PlaylistRepo playlistRepo, VideoPlaylistOrderRepo videoPlaylistOrderRepo, VideoRepo videoRepo, PlaylistService playlistService) {
+        this.playlistRepo = playlistRepo;
+        this.videoPlaylistOrderRepo = videoPlaylistOrderRepo;
+        this.videoRepo = videoRepo;
+        this.playlistService = playlistService;
+    }
 
     @Override
     public List<VideoPlaylistOrder> videoSort(String playlistId) {
