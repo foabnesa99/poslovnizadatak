@@ -1,62 +1,37 @@
-package com.example.demo;
+package com.example.demo.unittesting;
 
 
-import com.example.demo.controller.PlaylistController;
 import com.example.demo.model.Category;
 import com.example.demo.model.Playlist;
 import com.example.demo.model.Video;
 import com.example.demo.model.VideoPlaylistOrder;
+import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.repo.VideoPlaylistOrderRepo;
 import com.example.demo.repo.VideoRepo;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
-import com.example.demo.service.VideoService;
-import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.ResourceMissingException;
+import com.example.demo.util.exceptions.VideoMissingException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.web.servlet.function.RequestPredicates.contentType;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(PlaylistController.class)
-@AutoConfigureMockMvc
-public class PlaylistControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
+@SpringBootTest
+public class PlaylistVideoServiceVideoIndexTests {
 
     @MockBean
-    VideoService videoService;
-
-    @MockBean
-    PlaylistVideoService playlistVideoService;
+    PlaylistRepo playlistRepo;
 
     @MockBean
     PlaylistService playlistService;
@@ -67,10 +42,13 @@ public class PlaylistControllerTest {
     @MockBean
     VideoPlaylistOrderRepo videoPlaylistOrderRepo;
 
+    @Autowired
+    PlaylistVideoService playlistVideoService;
+
     @BeforeEach
     public void dataInit(){
 
-        Playlist playlist1 = new Playlist("Prva test plejlista" , new ArrayList<>(Arrays.asList(new Category("Horror"))));
+       Playlist playlist1 = new Playlist("Prva test plejlista" , new ArrayList<>(Arrays.asList(new Category("Horror"))));
         when(playlistService.getPlaylist("1")).thenReturn(playlist1);
         Video video1 = new Video("Prvi test video", new ArrayList<>(Arrays.asList(new Category("Horror"))));
         video1.setId("1");
@@ -102,28 +80,48 @@ public class PlaylistControllerTest {
         List<VideoPlaylistOrder> playlistVideoServiceList = new ArrayList<>(Arrays.asList(vpl1, vpl3 , vpl4));
 
         when(videoPlaylistOrderRepo.getVideoPlaylistOrdersByPlaylist(playlist1)).thenReturn(playlistVideoServiceList);
-        when(playlistVideoService.videoSort("1")).thenThrow(new PlaylistMissingException());
-        when(playlistVideoService.removeVideoFromPlaylist("2","12")).thenThrow(new ResourceMissingException());
+
     }
 
     @Test
-    public void playlistSortTest_ShouldThrowPlaylistMissingException() throws Exception {
-        mockMvc.perform(put("/api/playlists/1/sort")).andExpect(status().isNotFound());
+    public void videoChangeIndex_VideoNotExist_ShouldThrowException(){
+        Assertions.assertThrows(VideoMissingException.class, () ->{
+            playlistVideoService.videoIndex("1","5",1);
+        });
     }
 
     @Test
-    public void playlistSortTest_ShouldReturnOK() throws Exception{
-        mockMvc.perform(put("/api/playlists/2/sort")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    public void videoChangeIndex_VideoNotInPlaylist_ShouldThrowException(){
+        Assertions.assertThrows(ResourceMissingException.class, () -> {
+            playlistVideoService.videoIndex("1","2",1);
+        }
+        );
     }
 
     @Test
-    public void videoRemoveTest_ShouldThrowException() throws Exception{
-        mockMvc.perform(delete("/api/playlists/2/videos/delete/12")).andExpect(status().isNotFound());
+    public void videoChangeIndex_NewIndexOutOfBounds_ShouldSetIndex(){
+        List<VideoPlaylistOrder> playlists = playlistVideoService.videoIndex("1", "1" , 20);
+        Assertions.assertEquals(3, playlists.get(0).getOrderNumber());
+        Assertions.assertEquals(2, playlists.get(2).getOrderNumber());
+        Assertions.assertEquals(1, playlists.get(1).getOrderNumber());
     }
 
     @Test
-    public void videoRemoveTest_ShouldReturnOK() throws Exception{
-        mockMvc.perform(delete("/api/playlists/1/videos/delete/1")).andExpect(status().isOk());
+    public void videoChangeIndex_NewIndexLargerThanVideoIndex_ShouldSetIndex(){
+        List<VideoPlaylistOrder> playlists = playlistVideoService.videoIndex("1", "1" , 2);
+        Assertions.assertEquals(2, playlists.get(0).getOrderNumber());
+        Assertions.assertEquals(3, playlists.get(2).getOrderNumber());
+        Assertions.assertEquals(1, playlists.get(1).getOrderNumber());
+    }
+
+    @Test
+    public void videoChangeIndex_NewIndexSmallerThanVideoIndex_ShouldSetIndex(){
+        List<VideoPlaylistOrder> playlists = playlistVideoService.videoIndex("1", "4" , 1);
+        System.out.println(playlists);
+        Assertions.assertEquals(2, playlists.get(0).getOrderNumber());
+        Assertions.assertEquals(1, playlists.get(2).getOrderNumber());
+        Assertions.assertEquals(3, playlists.get(1).getOrderNumber());
+
     }
 
 }

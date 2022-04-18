@@ -17,7 +17,7 @@ public interface PlaylistVideoService {
 
     List<VideoPlaylistOrder>  videoSortByName(String playlistId);
 
-    void removeVideoFromPlaylist (String playlistId, String videoId);
+    Integer removeVideoFromPlaylist (String playlistId, String videoId);
 
     List<VideoPlaylistOrder> videoIndex(String playlistId, String videoId, Integer newIndex);
 

@@ -58,10 +58,10 @@ public class PlaylistController {
     public ResponseEntity playlistSort(@PathVariable String playlistid) {
         try {
             List<VideoPlaylistOrder> playlist = playlistVideoService.videoSort(playlistid);
-            return new ResponseEntity<>(playlist, HttpStatus.OK);
+           return new ResponseEntity<>(playlist, HttpStatus.OK);
         }
         catch (PlaylistMissingException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         }
         catch (Exception e) {
@@ -85,6 +85,7 @@ public class PlaylistController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+
     }
     @ApiOperation(value = "Add a video to a playlist", response = ResponseEntity.class)
     @ApiResponses(value = {
@@ -109,7 +110,7 @@ public class PlaylistController {
     @ApiOperation(value = "Change the position of a video in a playlist", response = ResponseEntity.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success|OK"),
-            @ApiResponse(code = 403, message = "Internal server error"),
+            @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 404, message = "Not Found!") })
     @RequestMapping(path = "{playlistid}/videos/{videoId}/to/{newIndex}", method = RequestMethod.PATCH)
     public ResponseEntity<?> positionUpdate(@PathVariable int playlistid, @PathVariable int videoId, @PathVariable int newIndex) {

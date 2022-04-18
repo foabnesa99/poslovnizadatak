@@ -5,6 +5,7 @@ import com.example.demo.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@Profile("Prod")
 public class DataInitialization implements ApplicationRunner {
 
     private UserRepo userRepository;

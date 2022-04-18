@@ -42,7 +42,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
         List<VideoPlaylistOrder> playlistForSorting = videoPlaylistOrderRepo.getVideoPlaylistOrdersByPlaylist(playlist);
 
-        playlistForSorting.stream().sorted(orderNumber).collect(Collectors.toList());
+        playlistForSorting.sort(orderNumber);
 
         return playlistForSorting;
     }
@@ -65,7 +65,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     }
 
     @Override
-    public void removeVideoFromPlaylist(String playlistId, String videoId) {
+    public Integer removeVideoFromPlaylist(String playlistId, String videoId) {
 
         Video video = videoRepo.getById(videoId);
         Playlist playlist = playlistRepo.getById(playlistId);
@@ -75,6 +75,8 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
         if(videoPlaylistOrder.isEmpty()) throw new ResourceMissingException();
 
         videoPlaylistOrderRepo.delete(videoPlaylistOrder.get());
+
+        return 0;
 
     }
 
@@ -93,22 +95,31 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
         Optional<VideoPlaylistOrder> foundVideoPlaylist = videoPlaylistOrderRepo.getVideoPlaylistOrderByPlaylistAndVideo(playlist, video.get());
 
-        if(foundVideoPlaylist.isEmpty()){
-            throw new VideoNotInPlaylistException();
+        if(foundVideoPlaylist.isEmpty()) {
+            throw new ResourceMissingException();
         }
 
         List<VideoPlaylistOrder> playlists = videoPlaylistOrderRepo.getVideoPlaylistOrdersByPlaylist(playlist);
 
-        Integer indexOfVideo = playlists.indexOf(foundVideoPlaylist);
+        Integer indexOfVideo = playlists.indexOf(foundVideoPlaylist.get());
 
         VideoPlaylistOrder foundVideo = playlists.get(indexOfVideo);
 
         if (newIndex > playlists.size()) {
+            Integer oldIndex = foundVideo.getOrderNumber();
             foundVideo.setOrderNumber(playlists.size());
             videoPlaylistOrderRepo.save(foundVideo);
+            for (VideoPlaylistOrder v : playlists) {
+
+                if (v.getOrderNumber() > oldIndex && v.getId() != foundVideo.getId()) {
+                    v.setOrderNumber(v.getOrderNumber() - 1);
+
+                }
+                videoPlaylistOrderRepo.save(v);
+            }
             }
 
-        if(newIndex > indexOfVideo) {
+        else if(newIndex > indexOfVideo) {
 
             for (VideoPlaylistOrder v : playlists) {
 
@@ -121,7 +132,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
             foundVideo.setOrderNumber(newIndex);
 
         }
-            if(newIndex < indexOfVideo) {
+            else if(newIndex < indexOfVideo) {
                 for (VideoPlaylistOrder v : playlists) {
                     if (v.getOrderNumber() >= newIndex && v.getOrderNumber() <= indexOfVideo) {
                     v.setOrderNumber(v.getOrderNumber() + 1);
@@ -135,11 +146,11 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
         videoPlaylistOrderRepo.save(foundVideo);
 
+/*
         Comparator<VideoPlaylistOrder> orderNumber = Comparator.comparing(VideoPlaylistOrder::getOrderNumber);
 
-        playlists.stream().sorted(orderNumber).collect(Collectors.toList());
-
-
+        playlists.sort(orderNumber);
+*/
 
         return playlists;
     }

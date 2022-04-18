@@ -10,29 +10,24 @@ import com.example.demo.repo.VideoPlaylistOrderRepo;
 import com.example.demo.repo.VideoRepo;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
-import com.example.demo.service.imp.PlaylistVideoServiceImp;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.slf4j.*;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class PlaylistVideoServiceTest {
+public class PlaylistVideoServiceIntegrationTest {
+
+    private static Logger logger = LoggerFactory.getLogger(PlaylistVideoServiceIntegrationTest.class);
 
     @Autowired
     private PlaylistVideoService playlistVideoService;
@@ -64,11 +59,13 @@ public class PlaylistVideoServiceTest {
        video2.setId("2");
        Video video5 = new Video("T Sjajan video macke kako pada u vodu", new ArrayList<>(Arrays.asList(categoryRepo.save(new Category("Horror")))));
        video5.setId("3");
-       Video video6 = new Video("B Video kako se penje lik", new ArrayList<>(Arrays.asList(new Category("Action"))));
+       Video video6 = new Video("B Video kako se penje lik", new ArrayList<>(Arrays.asList(categoryRepo.save(new Category("Action")))));
+        video6.setId("4");
 
        videoRepo.save(video1);
        videoRepo.save(video2);
        videoRepo.save(video5);
+       videoRepo.save(video6);
 
         Playlist playlist1 = new Playlist("Playlist 1" , new ArrayList<>(Arrays.asList(category1)));
         playlist1.setId("1");
@@ -93,22 +90,22 @@ public class PlaylistVideoServiceTest {
        vpo3.setOrderNumber(3);
        vpo3.setId("3");
 
+       VideoPlaylistOrder vpo4 = new VideoPlaylistOrder();
+       vpo4.setPlaylist(playlist1);
+       vpo4.setVideo(video6);
+       vpo4.setOrderNumber(4);
+       vpo4.setId("4");
+
 
        videoPlaylistOrderRepo.save(vpo1);
         videoPlaylistOrderRepo.save(vpo2);
         videoPlaylistOrderRepo.save(vpo3);
+        videoPlaylistOrderRepo.save(vpo4);
 
-
-       //when(videoPlaylistOrderRepo.findAll()).thenReturn(Stream.of(vpo1, vpo2).collect(Collectors.toList()));
    }
 
    @Test
     public void videoGetsRemovedFromPlaylistTest(){
-       //playlistVideoService = new PlaylistVideoServiceImp(playlistRepo, videoPlaylistOrderRepo, videoRepo, playlistService);
-
-       System.out.println(videoRepo.findAll()+ "Prvi videoRepo save");
-       System.out.println(playlistRepo.findAll()+ "Prvi playlistRepo save");
-       System.out.println(videoPlaylistOrderRepo.findAll()+ "Prvi videoPlaylistOrder save");
         Optional<VideoPlaylistOrder> deletedItem = videoPlaylistOrderRepo.getVideoPlaylistOrderByPlaylistAndVideo(playlistRepo.getById("1"), videoRepo.getById("1"));
        playlistVideoService.removeVideoFromPlaylist("1", "1");
        playlistVideoService.removeVideoFromPlaylist("1", "3");
@@ -117,6 +114,19 @@ public class PlaylistVideoServiceTest {
 
        assertThat(videoPlaylistOrders).doesNotContain(deletedItem.get());
        assertThat(videoPlaylistOrders).size().isEqualTo(1);
+
+   }
+
+   @Test
+
+    public void changeVideoIndexTest(){
+       List<VideoPlaylistOrder> playlist = playlistVideoService.videoIndex("1", "1", 3);
+       VideoPlaylistOrder vpo = videoPlaylistOrderRepo.getVideoPlaylistOrderByPlaylistAndVideo(playlistRepo.getById("1"), videoRepo.getById("1")).get();
+        Integer indexOfElement = playlist.indexOf(vpo);
+       assertThat(playlist.get(indexOfElement).getOrderNumber()).isEqualTo(3);
+       assertThat(playlist.get(indexOfElement + 1).getOrderNumber()).isEqualTo(1);
+       assertThat(playlist.get(indexOfElement + 2).getOrderNumber()).isEqualTo(2);
+
 
    }
 

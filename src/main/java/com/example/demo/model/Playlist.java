@@ -38,7 +38,7 @@ public class Playlist {
         this.categories = categories;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<Category> categories;
 
