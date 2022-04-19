@@ -11,7 +11,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table
+@Table(indexes = @Index(columnList = "orderNumber"))
 public class PlaylistChannel {
 
     @Id
@@ -27,6 +27,7 @@ public class PlaylistChannel {
     @ManyToOne
     private Playlist playlist;
 
+    @Column(name = "orderNumber")
     private Integer orderNumber;
 
     @Override

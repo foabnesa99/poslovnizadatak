@@ -11,6 +11,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @ToString
 @Entity
+@Table(indexes = @Index(columnList = "orderNumber"))
 public class VideoPlaylist {
 
     @Id
@@ -24,6 +25,7 @@ public class VideoPlaylist {
     @ManyToOne
     private Playlist playlist;
 
+    @Column(name = "orderNumber")
     private Integer orderNumber;
 
 }
