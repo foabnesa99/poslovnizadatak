@@ -1,13 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Playlist;
-import com.example.demo.model.VideoPlaylistOrder;
+import com.example.demo.model.VideoPlaylist;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
 import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.ResourceMissingException;
-import com.example.demo.util.exceptions.VideoMissingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -57,7 +56,7 @@ public class PlaylistController {
             @ApiResponse(code = 404, message = "Not Found!") })
     public ResponseEntity playlistSort(@PathVariable String playlistid) {
         try {
-            List<VideoPlaylistOrder> playlist = playlistVideoService.videoSort(playlistid);
+            List<VideoPlaylist> playlist = playlistVideoService.videoSort(playlistid);
            return new ResponseEntity<>(playlist, HttpStatus.OK);
         }
         catch (PlaylistMissingException e) {
@@ -115,7 +114,7 @@ public class PlaylistController {
     @RequestMapping(path = "{playlistid}/videos/{videoId}/to/{newIndex}", method = RequestMethod.PATCH)
     public ResponseEntity<?> positionUpdate(@PathVariable int playlistid, @PathVariable int videoId, @PathVariable int newIndex) {
         try {
-            List<VideoPlaylistOrder> playlist = playlistVideoService.videoIndex(Integer.toString(playlistid), Integer.toString(videoId), newIndex);
+            List<VideoPlaylist> playlist = playlistVideoService.videoIndex(Integer.toString(playlistid), Integer.toString(videoId), newIndex);
             return new ResponseEntity<>(playlist, HttpStatus.OK);
         } catch (ResourceMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -10,6 +10,8 @@ public interface VideoService {
 
     Video findOne(String videoId);
 
+    Video getVideo(String videoId);
+
     List<Video> findAll();
 
     Video save(Video video);

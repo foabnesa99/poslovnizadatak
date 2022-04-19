@@ -28,59 +28,63 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
     PlaylistService playlistService;
 
     @Override
-    public List<PlaylistChannelOrder> playlistSort(String channelId) {
+    public List<PlaylistChannel> playlistSort(String channelId) {
         Channel channel = channelService.getChannel(channelId);
 
-        Comparator<PlaylistChannelOrder> orderNumber = Comparator.comparing(PlaylistChannelOrder::getOrderNumber);
-
-        List<PlaylistChannelOrder> playlistForSorting = channelPlaylistRepo.getPlaylistChannelOrderByChannel(channel);
-
-        playlistForSorting.stream().sorted(orderNumber).collect(Collectors.toList());
-
-        return playlistForSorting;
+        return channelPlaylistRepo.getPlaylistChannelByChannelOrderByOrderNumber(channel);
     }
 
     @Override
-    public void removePlaylistFromChannel(String channelId, String playlistId) {
+    public List<PlaylistChannel> removePlaylistFromChannel(String channelId, String playlistId) {
 
         Playlist playlist = playlistService.getPlaylist(playlistId);
 
         Channel channel = channelService.getChannel(channelId);
 
-        Optional<PlaylistChannelOrder> playlistChannelOrder = channelPlaylistRepo.getPlaylistChannelOrderByChannelAndPlaylist(channel, playlist);
+        Optional<PlaylistChannel> playlistChannelOrder = channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel, playlist);
 
-        if(playlistChannelOrder.isEmpty()) throw new ResourceMissingException();
+        List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
+
+        if (playlistChannelOrder.isEmpty()) throw new ResourceMissingException();
+
+        for (PlaylistChannel p : playlistChannelList) {
+            if (p.getOrderNumber() > playlistChannelOrder.get().getOrderNumber()) {
+                p.setOrderNumber(p.getOrderNumber() - 1);
+                channelPlaylistRepo.save(p);
+            }
+        }
 
         channelPlaylistRepo.delete(playlistChannelOrder.get());
-    }
+        return channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
+        }
 
     @Override
-    public List<PlaylistChannelOrder> playlistIndex(String channelId, String playlistId, Integer newIndex) {
+    public List<PlaylistChannel> playlistIndex(String channelId, String playlistId, Integer newIndex) {
         Channel channel = channelService.getChannel(channelId);
-
         Playlist playlist = playlistService.getPlaylist(playlistId);
+        Optional<PlaylistChannel> foundPlaylist = channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel, playlist);
 
-        Optional<PlaylistChannelOrder> foundPlaylist = channelPlaylistRepo.getPlaylistChannelOrderByChannelAndPlaylist(channel, playlist);
-
-        if(foundPlaylist.isEmpty()){
+        if (foundPlaylist.isEmpty()) {
             throw new PlaylistNotInChannelException();
         }
 
-        List<PlaylistChannelOrder> channelOrderList = channelPlaylistRepo.getPlaylistChannelOrderByChannel(channel);
-
-        Integer indexOfPlaylist = channelOrderList.indexOf(playlist);
-
-        PlaylistChannelOrder playlistInChannel = channelOrderList.get(indexOfPlaylist);
+        List<PlaylistChannel> channelOrderList = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
+        Integer indexOfPlaylist = channelOrderList.indexOf(foundPlaylist.get());
+        PlaylistChannel playlistInChannel = channelOrderList.get(indexOfPlaylist);
 
         if (newIndex > channelOrderList.size()) {
+            Integer oldIndex = foundPlaylist.get().getOrderNumber();
             playlistInChannel.setOrderNumber(channelOrderList.size());
             channelPlaylistRepo.save(playlistInChannel);
-        }
 
-        if(newIndex > indexOfPlaylist) {
-
-            for (PlaylistChannelOrder p : channelOrderList) {
-
+            for (PlaylistChannel p : channelOrderList) {
+                if (p.getOrderNumber() > oldIndex && p.getId() != playlistInChannel.getId()) {
+                    p.setOrderNumber(p.getOrderNumber() - 1);
+                }
+                channelPlaylistRepo.save(p);
+            }
+        } else if (newIndex > indexOfPlaylist) {
+            for (PlaylistChannel p : channelOrderList) {
                 if (p.getOrderNumber() <= newIndex && p.getOrderNumber() >= indexOfPlaylist) {
                     p.setOrderNumber(p.getOrderNumber() - 1);
 
@@ -89,10 +93,8 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
             }
             playlistInChannel.setOrderNumber(newIndex);
             channelPlaylistRepo.save(playlistInChannel);
-
-        }
-        if(newIndex < indexOfPlaylist) {
-            for (PlaylistChannelOrder p : channelOrderList) {
+        } else if (newIndex < indexOfPlaylist) {
+            for (PlaylistChannel p : channelOrderList) {
                 if (p.getOrderNumber() >= newIndex && p.getOrderNumber() <= indexOfPlaylist) {
                     p.setOrderNumber(p.getOrderNumber() + 1);
                 }
@@ -102,40 +104,29 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
             playlistInChannel.setOrderNumber(newIndex);
             channelPlaylistRepo.save(playlistInChannel);
         }
-
-
-
-
-        Comparator<PlaylistChannelOrder> orderNumber = Comparator.comparing(PlaylistChannelOrder::getOrderNumber);
-
-        channelOrderList.stream().sorted(orderNumber).collect(Collectors.toList());
-
-
-
         return channelOrderList;
     }
 
     @Override
-    public PlaylistChannelOrder addPlaylistToChannel(String channelId, String playlistId) {
+    public PlaylistChannel addPlaylistToChannel(String channelId, String playlistId) {
         Playlist playlist = playlistService.getPlaylist(playlistId);
 
         Channel channel = channelService.getChannel(channelId);
 
-        PlaylistChannelOrder playlistChannelOrder = new PlaylistChannelOrder();
+        PlaylistChannel playlistChannel = new PlaylistChannel();
 
-        playlistChannelOrder.setChannel(channel);
+        playlistChannel.setChannel(channel);
 
-        playlistChannelOrder.setPlaylist(playlist);
+        playlistChannel.setPlaylist(playlist);
 
-        List<PlaylistChannelOrder> allPlaylistsInChannel = channelPlaylistRepo.getPlaylistChannelOrderByChannel(channel);
+        List<PlaylistChannel> allPlaylistsInChannel = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
 
-        if(allPlaylistsInChannel.isEmpty()){
-            playlistChannelOrder.setOrderNumber(1);
+        if (allPlaylistsInChannel.isEmpty()) {
+            playlistChannel.setOrderNumber(1);
+        } else {
+            playlistChannel.setOrderNumber(allPlaylistsInChannel.get(allPlaylistsInChannel.size() - 1).getOrderNumber() + 1);
         }
-        else{
-            playlistChannelOrder.setOrderNumber(allPlaylistsInChannel.get(allPlaylistsInChannel.size() - 1).getOrderNumber() + 1);
-        }
-        channelPlaylistRepo.save(playlistChannelOrder);
-        return playlistChannelOrder;
+        channelPlaylistRepo.save(playlistChannel);
+        return playlistChannel;
     }
 }

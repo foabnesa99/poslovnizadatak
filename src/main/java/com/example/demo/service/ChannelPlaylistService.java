@@ -1,17 +1,16 @@
 package com.example.demo.service;
 
-import com.example.demo.model.PlaylistChannelOrder;
-import com.example.demo.model.VideoPlaylistOrder;
+import com.example.demo.model.PlaylistChannel;
 
 import java.util.List;
 
 public interface ChannelPlaylistService {
 
-    List<PlaylistChannelOrder> playlistSort(String channelId);
+    List<PlaylistChannel> playlistSort(String channelId);
 
-    void removePlaylistFromChannel (String channelId, String playlistId);
+    List<PlaylistChannel> removePlaylistFromChannel (String channelId, String playlistId);
 
-    List<PlaylistChannelOrder> playlistIndex(String channelId, String playlistId, Integer newIndex);
+    List<PlaylistChannel> playlistIndex(String channelId, String playlistId, Integer newIndex);
 
-    PlaylistChannelOrder addPlaylistToChannel(String channelId, String playlistId);
+    PlaylistChannel addPlaylistToChannel(String channelId, String playlistId);
 }

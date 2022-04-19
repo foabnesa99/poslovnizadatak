@@ -23,7 +23,7 @@ public class Channel {
 
     @OneToMany
     @ToString.Exclude
-    private List<PlaylistChannelOrder> playlistList;
+    private List<PlaylistChannel> playlistList;
 
     private String name;
 

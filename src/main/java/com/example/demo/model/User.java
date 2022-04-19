@@ -29,9 +29,8 @@ public class User {
     @OneToOne
     Channel channel;
 
-    public User(String name, Channel channel) {
+    public User(String name) {
         this.name = name;
-        this.channel = channel;
     }
 
     @Override

@@ -92,7 +92,7 @@ public class VideoController {
         try {
             Video video = videoService.findOne(id.toString());
             video.setName(editedVideo.getName());
-            video.setVideoPlaylistOrders(editedVideo.getVideoPlaylistOrders());
+            video.setVideoPlaylists(editedVideo.getVideoPlaylists());
             video.setCategories(editedVideo.getCategories());
             return new ResponseEntity<>(video
                     , HttpStatus.OK);

@@ -25,7 +25,7 @@ public class Video {
 
     @ToString.Exclude
     @OneToMany
-    List<VideoPlaylistOrder> videoPlaylistOrders;
+    List<VideoPlaylist> videoPlaylists;
 
     @ManyToMany
     @ToString.Exclude

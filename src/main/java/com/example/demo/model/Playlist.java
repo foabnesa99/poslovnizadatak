@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -27,11 +26,11 @@ public class Playlist {
 
     @ToString.Exclude
     @OneToMany
-    private List<PlaylistChannelOrder> playlistChannelOrders;
+    private List<PlaylistChannel> playlistChannels;
 
     @ToString.Exclude
     @OneToMany
-    List<VideoPlaylistOrder> videoPlaylistOrders;
+    List<VideoPlaylist> videoPlaylists;
 
     public Playlist(String name, List<Category> categories) {
         this.name = name;

@@ -97,10 +97,10 @@ public class DataInitialization implements ApplicationRunner {
         Channel channel1 = new Channel();
         Channel channel2 = new Channel();
 
-        User korisnik1 = new User("Petar Petrovic",channel1);
+        User korisnik1 = new User("Petar Petrovic");
         channel1.setName("Perin Super Awesome kanal");
 
-        User korisnik2 = new User("Dragan Milovanovic", channel2);
+        User korisnik2 = new User("Dragan Milovanovic");
         channel2.setName("Dragcetov gameplay");
 
         channelRepo.save(channel2);

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @ToString
 @Entity
-public class VideoPlaylistOrder {
+public class VideoPlaylist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

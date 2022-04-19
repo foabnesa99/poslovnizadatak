@@ -10,10 +10,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @RequiredArgsConstructor
 @Table
-public class PlaylistChannelOrder {
+public class PlaylistChannel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +32,8 @@ public class PlaylistChannelOrder {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PlaylistChannelOrder)) return false;
-        PlaylistChannelOrder that = (PlaylistChannelOrder) o;
+        if (!(o instanceof PlaylistChannel)) return false;
+        PlaylistChannel that = (PlaylistChannel) o;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getChannel(), that.getChannel()) && Objects.equals(getPlaylist(), that.getPlaylist()) && Objects.equals(getOrderNumber(), that.getOrderNumber());
     }
 
