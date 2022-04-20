@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-@Profile("Prod")
+@Profile("prod")
 public class DataInitialization implements ApplicationRunner {
 
     private UserRepo userRepository;

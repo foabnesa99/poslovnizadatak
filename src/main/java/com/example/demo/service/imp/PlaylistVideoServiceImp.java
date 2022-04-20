@@ -11,11 +11,14 @@ import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import com.example.demo.util.exceptions.VideoMissingException;
+import com.example.demo.util.exceptions.VideoNotInPlaylistException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@Slf4j
 public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     private final PlaylistRepo playlistRepo;
@@ -35,6 +38,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     @Override
     public List<VideoPlaylist> videoSort(String playlistId) {
         Playlist playlist = playlistService.getPlaylist(playlistId);
+        log.info("Sorting a playlist with the id {} ...", playlistId);
 
         return videoPlaylistRepo.getVideoPlaylistByPlaylistOrderByOrderNumber(playlist);
     }
@@ -42,7 +46,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     @Override
     public List<VideoPlaylist> removeVideoFromPlaylist(String playlistId, String videoId) {
-
+        log.info("Removing a video with the id {} from playlist {}...", videoId, playlistId);
         Video video = videoService.getVideo(videoId);
         Playlist playlist = playlistService.getPlaylist(playlistId);
 
@@ -50,7 +54,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
         List<VideoPlaylist> videoPlaylistList = videoPlaylistRepo.getVideoPlaylistsByPlaylist(playlist);
 
-        if (videoPlaylistOrder.isEmpty()) throw new ResourceMissingException();
+        if (videoPlaylistOrder.isEmpty()) throw new VideoNotInPlaylistException();
 
         for(VideoPlaylist v : videoPlaylistList){
             if(v.getOrderNumber() > videoPlaylistOrder.get().getOrderNumber())
@@ -60,11 +64,14 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
             }
         }
         videoPlaylistList.remove(videoPlaylistOrder.get());
+        log.info("Video {} removed!", videoId);
         videoPlaylistRepo.delete(videoPlaylistOrder.get());
         return videoPlaylistList;
     }
     @Override
     public List<VideoPlaylist> videoIndex(String playlistId, String videoId, Integer newIndex) {
+
+        log.info("Moving the video {} in playlist {} to a new position - {}", videoId, playlistId, newIndex);
         Optional<Video> video = videoRepo.findById(videoId);
         Playlist playlist = playlistService.getPlaylist(playlistId);
         if (video.isEmpty()) throw new VideoMissingException();
@@ -78,6 +85,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
         VideoPlaylist foundVideo = playlists.get(indexOfVideo);
 
         if (newIndex > playlists.size()) {
+            log.info("The new index of the video surpasses the size of the playlist. Setting the video as the last element in the playlist...");
             Integer oldIndex = foundVideo.getOrderNumber();
             foundVideo.setOrderNumber(playlists.size());
             videoPlaylistRepo.save(foundVideo);
@@ -110,7 +118,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 /*
         Comparator<VideoPlaylist> orderNumber = Comparator.comparing(VideoPlaylist::getOrderNumber);
         playlists.sort(orderNumber);
-*/
+*/      log.info("Video {} order number updated", videoId);
         return playlists;
     }
 }

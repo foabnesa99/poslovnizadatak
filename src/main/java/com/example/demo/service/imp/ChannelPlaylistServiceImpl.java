@@ -1,21 +1,23 @@
 package com.example.demo.service.imp;
 
-import com.example.demo.model.*;
+import com.example.demo.model.Channel;
+import com.example.demo.model.Playlist;
+import com.example.demo.model.PlaylistChannel;
 import com.example.demo.repo.ChannelPlaylistRepo;
 import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.ChannelService;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.util.exceptions.PlaylistNotInChannelException;
 import com.example.demo.util.exceptions.ResourceMissingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Autowired
@@ -29,6 +31,8 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Override
     public List<PlaylistChannel> playlistSort(String channelId) {
+        log.info("Sorting a channel with the id {} ...", channelId);
+
         Channel channel = channelService.getChannel(channelId);
 
         return channelPlaylistRepo.getPlaylistChannelByChannelOrderByOrderNumber(channel);
@@ -36,6 +40,8 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Override
     public List<PlaylistChannel> removePlaylistFromChannel(String channelId, String playlistId) {
+
+        log.info("Removing a playlist with the id {} from channel {}...", playlistId, channelId);
 
         Playlist playlist = playlistService.getPlaylist(playlistId);
 
@@ -45,7 +51,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
         List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
 
-        if (playlistChannelOrder.isEmpty()) throw new ResourceMissingException();
+        if (playlistChannelOrder.isEmpty()) throw new PlaylistNotInChannelException();
 
         for (PlaylistChannel p : playlistChannelList) {
             if (p.getOrderNumber() > playlistChannelOrder.get().getOrderNumber()) {
@@ -55,11 +61,15 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
         }
 
         channelPlaylistRepo.delete(playlistChannelOrder.get());
+        log.info("Playlist {} removed!", playlistId);
         return channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
         }
 
     @Override
     public List<PlaylistChannel> playlistIndex(String channelId, String playlistId, Integer newIndex) {
+
+        log.info("Moving the playlist {} in channel {} to a new position - {}", playlistId, channelId, newIndex);
+
         Channel channel = channelService.getChannel(channelId);
         Playlist playlist = playlistService.getPlaylist(playlistId);
         Optional<PlaylistChannel> foundPlaylist = channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel, playlist);
@@ -76,7 +86,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
             Integer oldIndex = foundPlaylist.get().getOrderNumber();
             playlistInChannel.setOrderNumber(channelOrderList.size());
             channelPlaylistRepo.save(playlistInChannel);
-
+            log.info("The new index of the playlist surpasses the size of the channel. Setting the playlist as the last element in the channel...");
             for (PlaylistChannel p : channelOrderList) {
                 if (p.getOrderNumber() > oldIndex && p.getId() != playlistInChannel.getId()) {
                     p.setOrderNumber(p.getOrderNumber() - 1);
@@ -104,11 +114,14 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
             playlistInChannel.setOrderNumber(newIndex);
             channelPlaylistRepo.save(playlistInChannel);
         }
+        log.info("Playlist {} order number updated", playlistId);
         return channelOrderList;
     }
 
     @Override
     public PlaylistChannel addPlaylistToChannel(String channelId, String playlistId) {
+        log.info("Adding a playlist with the ID {} to the channel...", playlistId);
+
         Playlist playlist = playlistService.getPlaylist(playlistId);
 
         Channel channel = channelService.getChannel(channelId);
@@ -127,6 +140,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
             playlistChannel.setOrderNumber(allPlaylistsInChannel.get(allPlaylistsInChannel.size() - 1).getOrderNumber() + 1);
         }
         channelPlaylistRepo.save(playlistChannel);
+        log.info("Playlist added to the channel!");
         return playlistChannel;
     }
 }
