@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,14 +17,15 @@ import java.util.List;
 @Profile("prod")
 public class DataInitialization implements ApplicationRunner {
 
+    private PasswordEncoder passwordEncoder;
     private UserRepo userRepository;
     private PlaylistRepo playlistRepo;
     private VideoRepo videoRepo;
     private CategoryRepo categoryRepo;
     private ChannelRepo channelRepo;
 
-    @Autowired
-    public DataInitialization(UserRepo userRepository, PlaylistRepo playlistRepo, VideoRepo videoRepo, CategoryRepo categoryRepo, ChannelRepo channelRepo) {
+    public DataInitialization(PasswordEncoder passwordEncoder, UserRepo userRepository, PlaylistRepo playlistRepo, VideoRepo videoRepo, CategoryRepo categoryRepo, ChannelRepo channelRepo) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.playlistRepo = playlistRepo;
         this.videoRepo = videoRepo;
@@ -91,20 +93,20 @@ public class DataInitialization implements ApplicationRunner {
         plejlista2.setName("Perina druga plejlista");
 
 
-        List<Playlist> plejlistakorisnik1 = new ArrayList<Playlist>();
-        plejlistakorisnik1.add(plejlista1);
-
         Channel channel1 = new Channel();
-        Channel channel2 = new Channel();
-
-        User korisnik1 = new User("Petar Petrovic");
         channel1.setName("Perin Super Awesome kanal");
-
-        User korisnik2 = new User("Dragan Milovanovic");
+        Channel channel2 = new Channel();
         channel2.setName("Dragcetov gameplay");
-
         channelRepo.save(channel2);
         channelRepo.save(channel1);
+
+        User korisnik1 = new User("Petar Petrovic" , "pera1", passwordEncoder.encode("peracar011"), UserRoles.ROLE_USER);
+
+
+        User korisnik2 = new User("Dragan Milovanovic", "draganche", passwordEncoder.encode("draganmil0123"), UserRoles.ROLE_USER);
+
+
+
         userRepository.save(korisnik1);
         userRepository.save(korisnik2);
     }

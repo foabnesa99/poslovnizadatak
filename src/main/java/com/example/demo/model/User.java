@@ -23,14 +23,26 @@ public class User {
     @Column
     private String name;
 
+    @Column//(unique = true)
+    private String username;
+
+    @Column
+    private String password;
+
+    @Column
+    private UserRoles roles;
+
 
 
     @ToString.Exclude
     @OneToOne
     Channel channel;
 
-    public User(String name) {
+    public User(String name, String username, String password, UserRoles roles) {
         this.name = name;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
     }
 
     @Override

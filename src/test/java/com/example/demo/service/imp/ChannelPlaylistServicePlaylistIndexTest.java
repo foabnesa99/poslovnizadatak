@@ -59,11 +59,11 @@ public class ChannelPlaylistServicePlaylistIndexTest {
         when(playlistService.getPlaylist("5")).
                 thenReturn(playlist5);
 
-        Channel channel1 = new Channel("Perin kanal", new User("Petar petrovic"));
+        Channel channel1 = new Channel("Perin kanal", new User());
         channel1.setId("1");
         when(channelService.getChannel("1"))
                 .thenReturn(channel1);
-        Channel channel2 = new Channel("Draganov kanal", new User("Dragan Mitrovic"));
+        Channel channel2 = new Channel("Draganov kanal", new User());
         channel2.setId("2");
         when(channelService.getChannel("2"))
                 .thenReturn(channel2);

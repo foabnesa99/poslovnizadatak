@@ -51,8 +51,8 @@ class ChannelPlaylistServiceIntegrationTest {
         Playlist playlist4 = playlistRepo.save(new Playlist("Cetvrta test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Komedija"))))));
         Playlist playlist5 = playlistRepo.save(new Playlist("Peta test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Dokumentarni"))))));
 
-        Channel channel1 = channelRepo.save(new Channel("Prvi kanal test", userRepo.save(new User("Pera peric"))));
-        Channel channel2 = channelRepo.save(new Channel("Drugi kanal test", userRepo.save(new User("Dragance"))));
+        Channel channel1 = channelRepo.save(new Channel("Prvi kanal test", userRepo.save(new User())));
+        Channel channel2 = channelRepo.save(new Channel("Drugi kanal test", userRepo.save(new User())));
 
         PlaylistChannel pc1 = channelPlaylistService.addPlaylistToChannel("1", "1");
         PlaylistChannel pc2 = channelPlaylistService.addPlaylistToChannel("1", "2");

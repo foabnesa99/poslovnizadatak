@@ -5,20 +5,27 @@ import com.example.demo.model.User;
 import com.example.demo.model.Video;
 import com.example.demo.repo.UserRepo;
 import com.example.demo.service.UserService;
+import com.example.demo.util.exceptions.MissingUserException;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service
 @Slf4j
-public class UserServiceImp implements UserService {
+@Transactional
+public class UserServiceImp implements UserService, UserDetailsService {
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Autowired
     UserRepo userRepo;
 
@@ -41,6 +48,7 @@ public class UserServiceImp implements UserService {
     @Override
     public User save(User user) {
         log.info("Saving the user to the database...");
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
@@ -49,5 +57,22 @@ public class UserServiceImp implements UserService {
         log.info("Removing the user from the database...");
         userRepo.deleteById(userId);
 
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        List<User> foundUsers = userRepo.findAll();
+        System.out.println("\n \n \n" + foundUsers + "\n KORISNICI \n \n");
+        Optional<User> foundUser = userRepo.findUserByUsername(username);
+        if (foundUser.isEmpty())throw new MissingUserException();
+        return foundUser.get();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUsername(username);
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRoles().name()));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }
