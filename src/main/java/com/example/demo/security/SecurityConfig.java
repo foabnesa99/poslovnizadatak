@@ -37,9 +37,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthFilter customAuthFilter = new CustomAuthFilter(authenticationManagerBean());
         http.csrf().disable();
+        http.formLogin().loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/homepage", true)
+                .failureUrl("/login.html?error=true").and().logout().logoutUrl("/perform_logout").deleteCookies("JSESSIONID");
         http.headers().frameOptions().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login", "/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/", "/login", "/token/refresh/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/playlists/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthFilter);

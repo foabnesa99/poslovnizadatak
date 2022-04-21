@@ -20,6 +20,7 @@ import java.util.*;
 
 @Service
 @Slf4j
+@Transactional
 public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     private final PlaylistRepo playlistRepo;
