@@ -72,7 +72,8 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username);
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRoles().name()));
+        authorities.add(new SimpleGrantedAuthority(user.getRoles().toString()));
+        System.out.println(authorities + "AUTHORITIES OBJ \n \n");
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }
