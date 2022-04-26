@@ -24,6 +24,8 @@ import static java.lang.invoke.VarHandle.AccessMode.GET;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    public AuthorizationFilter authorizationFilter;
     private final UserDetailsService userDetailsService;
 
     private final BCryptPasswordEncoder passwordEncoder;
@@ -37,15 +39,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthFilter customAuthFilter = new CustomAuthFilter(authenticationManagerBean());
         http.csrf().disable();
-        http.formLogin().loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/homepage", true)
-                .failureUrl("/login.html?error=true").and().logout().logoutUrl("/perform_logout").deleteCookies("JSESSIONID");
+        http.authorizeRequests().antMatchers("/", "/*.css","/login", "/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/resources/**").permitAll();
+        http.authorizeRequests().antMatchers("/css/**", "/js/**", "/images/**").permitAll();
         http.headers().frameOptions().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/", "/login", "/token/refresh/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/playlists/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthFilter);
-        http.addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.formLogin().loginPage("/login").defaultSuccessUrl("/", true)
+                .failureUrl("/login.html?error=true").and().logout().logoutUrl("/perform_logout").deleteCookies("JSESSIONID");
     }
 
     @Bean

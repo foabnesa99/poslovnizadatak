@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -48,10 +49,10 @@ public class PlaylistVideoServiceVideoIndexTests {
     public void dataInit(){
 
        Playlist playlist1 = new Playlist("Prva test plejlista" , new ArrayList<>(List.of(new Category("Horror"))));
-        when(playlistService.getPlaylist("1")).thenReturn(playlist1);
+        when(playlistService.getPlaylist(eq("1"))).thenReturn(playlist1);
         Video video1 = new Video("Prvi test video", new ArrayList<>(List.of(new Category("Horror"))));
         video1.setId("1");
-        when(videoRepo.findById("1")).thenReturn(Optional.of(video1));
+        when(videoRepo.findById(eq("1"))).thenReturn(Optional.of(video1));
         Video video2 = new Video("Drugi test video", new ArrayList<>(List.of(new Category("Thriller"))));
         video2.setId("2");
         Video video3 = new Video("Treci test video", new ArrayList<>(List.of(new Category("Action"))));
@@ -61,24 +62,24 @@ public class PlaylistVideoServiceVideoIndexTests {
         Video video5 = new Video("Peti test video", new ArrayList<>(List.of(new Category("Documentary"))));
         video5.setId("5");
 
-        when(videoRepo.findById("3")).thenReturn(Optional.of(video3));
-        when(videoRepo.findById("2")).thenReturn(Optional.of(video2));
-        when(videoRepo.findById("4")).thenReturn(Optional.of(video4));
-        when(videoRepo.findById("5")).thenReturn(Optional.empty());
+        when(videoRepo.findById(eq("3"))).thenReturn(Optional.of(video3));
+        when(videoRepo.findById(eq("2"))).thenReturn(Optional.of(video2));
+        when(videoRepo.findById(eq("4"))).thenReturn(Optional.of(video4));
+        when(videoRepo.findById(eq("5"))).thenReturn(Optional.empty());
         VideoPlaylist vpl1 = new VideoPlaylist("1",video1 , playlist1 , 1);
         Optional<VideoPlaylist> vpl2 = Optional.empty();
         VideoPlaylist vpl3 = new VideoPlaylist("3",video3 , playlist1 , 2);
         VideoPlaylist vpl4 = new VideoPlaylist("4",video4 , playlist1 , 3);
         VideoPlaylist vpl5 = new VideoPlaylist("5",video5 , playlist1 , 4);
 
-        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(playlist1, video1)).thenReturn(Optional.of(vpl1));
-        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(playlist1, video2)).thenReturn(vpl2);
-        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(playlist1, video3)).thenReturn(Optional.of(vpl3));
-        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(playlist1, video4)).thenReturn(Optional.of(vpl4));
+        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(eq(playlist1), eq(video1))).thenReturn(Optional.of(vpl1));
+        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(eq(playlist1), eq(video2))).thenReturn(vpl2);
+        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(eq(playlist1), eq(video3))).thenReturn(Optional.of(vpl3));
+        when(videoPlaylistRepo.getVideoPlaylistByPlaylistAndVideo(eq(playlist1), eq(video4))).thenReturn(Optional.of(vpl4));
 
         List<VideoPlaylist> playlistVideoServiceList = new ArrayList<>(Arrays.asList(vpl1, vpl3 , vpl4));
 
-        when(videoPlaylistRepo.getVideoPlaylistsByPlaylist(playlist1)).thenReturn(playlistVideoServiceList);
+        when(videoPlaylistRepo.getVideoPlaylistsByPlaylist(eq(playlist1))).thenReturn(playlistVideoServiceList);
 
     }
 

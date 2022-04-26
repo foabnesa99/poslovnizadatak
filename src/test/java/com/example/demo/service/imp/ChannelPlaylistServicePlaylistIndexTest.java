@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -40,32 +41,32 @@ public class ChannelPlaylistServicePlaylistIndexTest {
 
         Playlist playlist1 = new Playlist("Prva test plejlista", new ArrayList<>(List.of(new Category("Triler"))));
         playlist1.setId("1");
-        when(playlistService.getPlaylist("1")).
+        when(playlistService.getPlaylist(eq("1"))).
                 thenReturn(playlist1);
         Playlist playlist2 = new Playlist("Druga test plejlista", new ArrayList<>(List.of(new Category("Akcija"))));
         playlist2.setId("2");
-        when(playlistService.getPlaylist("2")).
+        when(playlistService.getPlaylist(eq("2"))).
                 thenReturn(playlist2);
         Playlist playlist3 = new Playlist("Treca test plejlista", new ArrayList<>(List.of(new Category("Horor"))));
         playlist3.setId("3");
-        when(playlistService.getPlaylist("3")).
+        when(playlistService.getPlaylist(eq("3"))).
                 thenReturn(playlist3);
         Playlist playlist4 = new Playlist("Cetvrta test plejlista", new ArrayList<>(List.of(new Category("Komedija"))));
         playlist4.setId("4");
-        when(playlistService.getPlaylist("4")).
+        when(playlistService.getPlaylist(eq("4"))).
                 thenReturn(playlist4);
         Playlist playlist5 = new Playlist("Peta test plejlista", new ArrayList<>(List.of(new Category("Dokumentarni"))));
         playlist5.setId("5");
-        when(playlistService.getPlaylist("5")).
+        when(playlistService.getPlaylist(eq("5"))).
                 thenReturn(playlist5);
 
         Channel channel1 = new Channel("Perin kanal", new User());
         channel1.setId("1");
-        when(channelService.getChannel("1"))
+        when(channelService.getChannel(eq("1")))
                 .thenReturn(channel1);
         Channel channel2 = new Channel("Draganov kanal", new User());
         channel2.setId("2");
-        when(channelService.getChannel("2"))
+        when(channelService.getChannel(eq("2")))
                 .thenReturn(channel2);
 
         PlaylistChannel cpl1 = new PlaylistChannel();
@@ -92,12 +93,12 @@ public class ChannelPlaylistServicePlaylistIndexTest {
         cpl4.setId("4");
         cpl4.setOrderNumber(4);
 
-        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel1, playlist1)).thenReturn(Optional.of(cpl1));
-        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel1, playlist2)).thenReturn(Optional.of(cpl2));
-        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel1, playlist3)).thenReturn(Optional.of(cpl3));
-        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(channel1, playlist4)).thenReturn(Optional.of(cpl4));
+        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(eq(channel1) , eq(playlist1))).thenReturn(Optional.of(cpl1));
+        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(eq(channel1), eq(playlist2))).thenReturn(Optional.of(cpl2));
+        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(eq(channel1),eq(playlist3))).thenReturn(Optional.of(cpl3));
+        when(channelPlaylistRepo.getPlaylistChannelByChannelAndPlaylist(eq(channel1), eq(playlist4))).thenReturn(Optional.of(cpl4));
 
-        when(channelPlaylistRepo.getPlaylistChannelsByChannel(channel1)).thenReturn(new ArrayList<>(Arrays.asList(cpl1, cpl2, cpl3, cpl4)));
+        when(channelPlaylistRepo.getPlaylistChannelsByChannel(eq(channel1))).thenReturn(new ArrayList<>(Arrays.asList(cpl1, cpl2, cpl3, cpl4)));
 
     }
 

@@ -23,8 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -55,9 +54,9 @@ class ChannelControllerTest {
 
     @BeforeEach
     void setUp() {
-        when(channelPlaylistService.playlistSort("3")).thenReturn(new ArrayList<>(List.of(new PlaylistChannel())));
-        when(channelPlaylistService.playlistSort("1")).thenThrow(new ChannelMissingException());
-        when(channelPlaylistService.removePlaylistFromChannel("1","20")).thenThrow(new ResourceMissingException());
+        when(channelPlaylistService.playlistSort(eq("3"))).thenReturn(new ArrayList<>(List.of(new PlaylistChannel())));
+        when(channelPlaylistService.playlistSort(eq("1"))).thenThrow(new ChannelMissingException());
+        when(channelPlaylistService.removePlaylistFromChannel(eq("1"), eq("20"))).thenThrow(new ResourceMissingException());
     }
 
     @Test

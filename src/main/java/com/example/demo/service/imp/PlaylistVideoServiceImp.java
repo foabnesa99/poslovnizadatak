@@ -41,8 +41,8 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     public List<VideoPlaylist> videoSort(String playlistId) {
         Playlist playlist = playlistService.getPlaylist(playlistId);
         log.info("Sorting a playlist with the id {} ...", playlistId);
-
-        return videoPlaylistRepo.getVideoPlaylistByPlaylistOrderByOrderNumber(playlist);
+        List<VideoPlaylist> videoPlaylistList = videoPlaylistRepo.getVideoPlaylistByPlaylistOrderByOrderNumber(playlist);
+        return videoPlaylistList;
     }
 
 

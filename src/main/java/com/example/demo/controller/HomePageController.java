@@ -2,10 +2,9 @@ package com.example.demo.controller;
 
 import io.swagger.annotations.Api;
 import org.springframework.boot.Banner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -25,4 +24,6 @@ public class HomePageController {
         ModelAndView mav = new ModelAndView("loginpage");
         return mav;
     }
+
+
 }
