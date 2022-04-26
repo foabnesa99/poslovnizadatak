@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -64,8 +66,12 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
         request.setAttribute("principal", authResult.getPrincipal());
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/auth/login/");
+        System.out.println(authResult.getName() + "AUTH NAME");
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authResult);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/");
         dispatcher.forward(request,response);
+
 
     }
 

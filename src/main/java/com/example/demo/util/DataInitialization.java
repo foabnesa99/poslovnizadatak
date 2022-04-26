@@ -103,7 +103,7 @@ public class DataInitialization implements ApplicationRunner {
         User korisnik1 = new User("Petar Petrovic" , "pera1", passwordEncoder.encode("peracar011"), UserRoles.ROLE_USER);
 
 
-        User korisnik2 = new User("Dragan Milovanovic", "draganche", passwordEncoder.encode("draganmil0123"), UserRoles.ROLE_USER);
+        User korisnik2 = new User("Dragan Milovanovic", "draganche", passwordEncoder.encode("12345678"), UserRoles.ROLE_USER);
 
 
 
