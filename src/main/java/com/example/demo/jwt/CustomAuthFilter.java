@@ -65,10 +65,10 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
-        request.setAttribute("principal", authResult.getPrincipal());
-        System.out.println(authResult.getName() + "AUTH NAME");
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authResult);
+        //request.setAttribute("principal", authResult.getPrincipal());
+        //System.out.println(authResult.getName() + "AUTH NAME");
+        //SecurityContext context = SecurityContextHolder.createEmptyContext();
+        //context.setAuthentication(authResult);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/");
         dispatcher.forward(request,response);
 

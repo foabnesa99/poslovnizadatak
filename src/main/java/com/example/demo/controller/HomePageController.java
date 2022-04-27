@@ -34,15 +34,10 @@ public class HomePageController {
         HttpServletResponse response = (HttpServletResponse) model.getAttribute("response");
 
         if(authentication != null && authentication.isAuthenticated() && request != null){
-
-            System.out.println(request.getUserPrincipal().getName() + "USER PRINCIPAL NAME");
-            //System.out.println("\n SESSION CREATION TIME" + session.getCreationTime());
-            System.out.println(" \n \n This does work \n \n ");
+            //ubaceno samo radi testa
+            //System.out.println(request.getUserPrincipal().getName() + "USER PRINCIPAL NAME");
             return mav;
         }
-        else System.out.println("It doesn't work");
-        //System.out.println(request.getAttribute("principal") + "PRINCIPAL");
-
         return mav;
     }
 
