@@ -19,10 +19,10 @@
             <li class="nav-item active">
                 <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" th:if="!${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{loginpage.html}">Login</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/perform_logout}" th:action="@{/perform_logout}">Log out</a>
             </li>
             <li class="nav-item">
@@ -34,11 +34,14 @@
 </nav>
     <div class="main-page">
         <h1>Ovo je homepage</h1>
-        <div sec:authorize="isAuthenticated()">User is logged in</div>
-        <p>Logged user:</p>
-        <span sec:authentication="name">Lol</span>
-        <span sec:authenticatioon="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+        <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+            <p>Logged user:</p>
+            <span sec:authentication="name">Lol</span>
+            <span sec:authenticatioon="principal.authorities"></span>
+        </div>
+
 
     </div>
+
 </body>
 </html>

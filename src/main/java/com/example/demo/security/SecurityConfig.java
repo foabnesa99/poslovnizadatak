@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthFilter customAuthFilter = new CustomAuthFilter(authenticationManagerBean());
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/", "/*.css","/login", "/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/","/home" ,"/*.css","/login", "/token/refresh/**").permitAll();
         http.authorizeRequests().antMatchers("/resources/**").permitAll();
         http.authorizeRequests().antMatchers("/css/**", "/js/**", "/images/**").permitAll();
         http.headers().frameOptions().disable();

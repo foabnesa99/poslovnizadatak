@@ -101,13 +101,11 @@ public class DataInitialization implements ApplicationRunner {
         channelRepo.save(channel1);
 
         User korisnik1 = new User("Petar Petrovic" , "pera1", passwordEncoder.encode("peracar011"), UserRoles.ROLE_USER);
-
-
         User korisnik2 = new User("Dragan Milovanovic", "draganche", passwordEncoder.encode("12345678"), UserRoles.ROLE_USER);
-
-
+        User korisnik3 = new User("Milan Admin" , "admin1" , passwordEncoder.encode("adminadmin") , UserRoles.ROLE_ADMIN);
 
         userRepository.save(korisnik1);
         userRepository.save(korisnik2);
+        userRepository.save(korisnik3);
     }
 }

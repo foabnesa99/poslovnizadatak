@@ -122,7 +122,6 @@ public class UserController {
                 new ObjectMapper().writeValue(response.getOutputStream(),tokens);
             }
             catch (Exception e){
-                System.out.println("GRESKA JE U KONTROLERU");
                 log.error("Error logging in: {}", e.getMessage());
                 response.setHeader("error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());

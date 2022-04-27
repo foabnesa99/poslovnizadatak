@@ -1,59 +1,56 @@
 package com.example.demo.controller;
 
 import io.swagger.annotations.Api;
-import org.springframework.boot.Banner;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.Principal;
+
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 
 @Api(value = "Home page controller", description = "REST API for the home page")
 @RestController
 @RequestMapping(value = "/")
+@Slf4j
 public class HomePageController {
 
-    @GetMapping()
-    public ModelAndView homepage(ModelMap model){
-
-        HttpSession session = (HttpSession) model.getAttribute("session");
+    @GetMapping("/home")
+    public ModelAndView homepage(HttpServletRequest request, HttpServletResponse response, HttpSession session){
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         ModelAndView mav = new ModelAndView("homepage");
-        HttpServletRequest request = (HttpServletRequest) model.getAttribute("request");
-        HttpServletResponse response = (HttpServletResponse) model.getAttribute("response");
-
-        if(authentication != null && authentication.isAuthenticated() && request != null){
-            //ubaceno samo radi testa
-            //System.out.println(request.getUserPrincipal().getName() + "USER PRINCIPAL NAME");
+        if(session.getAttribute("principal") != null){
+            context = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
+            authentication = context.getAuthentication();
+            log.info(session.getAttribute("principal")+ "USER PRINCIPAL NAME \n");
             return mav;
         }
+        
         return mav;
     }
 
     @GetMapping("/login")
-    public ModelAndView login(Model model){
+    public ModelAndView login(){
         ModelAndView mav = new ModelAndView("loginpage");
         return mav;
     }
     @PostMapping
-    public ModelAndView loginHandler(HttpServletRequest request, HttpServletResponse response, HttpSession session){
-        ModelMap model = new ModelMap();
-        model.addAttribute("request", request);
-        model.addAttribute("response", response);
-        model.addAttribute("session", session);
-        //homepage(response, request, session);
-        return new ModelAndView("forward:/", model);
+    public RedirectView loginHandler(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, ServletException {
+        session.setAttribute("principal" , request.getAttribute("principal"));
+        return new RedirectView("/home", true);
     }
 
 
