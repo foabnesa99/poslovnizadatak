@@ -12,12 +12,12 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand" href="#">YouTube for poor people</a>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" th:href="@{/home}">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" th:href="@{/home}">Home</a>
       </li>
       <li class="nav-item" th:if="!${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
         <a class="nav-link" th:href="@{loginpage.html}">Login</a>
@@ -26,7 +26,7 @@
         <a class="nav-link" th:href="@{/perform_logout}" th:action="@{/perform_logout}">Log out</a>
       </li>
       <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-        <a class="nav-link" href="#">Playlists</a>
+        <a class="nav-link" href="#">Channels</a>
       </li>
       <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
         <a class="nav-link" th:href="@{/api/playlists/}">Playlists</a>
@@ -39,9 +39,16 @@
   </div>
 </nav>
 <div class="main-page">
-  <h1>Ovo je vas kanal</h1>
+
   <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+    <h1>Ovo je vas kanal</h1>
     <p th:text="${channel.name}"></p>
+  </div>
+  <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+    <h1>Ovo su svi kanali</h1>
+    <div th:each="ch : ${channel}">
+    <p th:text="${ch.name}"></p>
+    </div>
   </div>
 
 

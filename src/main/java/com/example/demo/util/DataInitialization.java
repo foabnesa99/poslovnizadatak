@@ -24,13 +24,19 @@ public class DataInitialization implements ApplicationRunner {
     private CategoryRepo categoryRepo;
     private ChannelRepo channelRepo;
 
-    public DataInitialization(PasswordEncoder passwordEncoder, UserRepo userRepository, PlaylistRepo playlistRepo, VideoRepo videoRepo, CategoryRepo categoryRepo, ChannelRepo channelRepo) {
+    private ChannelPlaylistRepo channelPlaylistRepo;
+
+    private VideoPlaylistRepo videoPlaylistRepo;
+
+    public DataInitialization(PasswordEncoder passwordEncoder, UserRepo userRepository, PlaylistRepo playlistRepo, VideoRepo videoRepo, CategoryRepo categoryRepo, ChannelRepo channelRepo, ChannelPlaylistRepo channelPlaylistRepo, VideoPlaylistRepo videoPlaylistRepo) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.playlistRepo = playlistRepo;
         this.videoRepo = videoRepo;
         this.categoryRepo = categoryRepo;
         this.channelRepo = channelRepo;
+        this.channelPlaylistRepo = channelPlaylistRepo;
+        this.videoPlaylistRepo = videoPlaylistRepo;
     }
 
     public void run(ApplicationArguments args) {
@@ -78,20 +84,20 @@ public class DataInitialization implements ApplicationRunner {
         videoRepo.save(video6);
 
 
-        List<Video> plejlistaVideo = new ArrayList<>();
-        plejlistaVideo.add(video1);
-        plejlistaVideo.add(video2);
-        plejlistaVideo.add(video3);
-        plejlistaVideo.add(video4);
-        plejlistaVideo.add(video5);
-        plejlistaVideo.add(video6);
-
         plejlista1.setName("Perina prva plejlista");
-        plejlista1.setCategories(new ArrayList<>(Arrays.asList(category1)));
+        plejlista1.setCategories(new ArrayList<>(Arrays.asList(category1, category3, category4)));
+        plejlista1.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
         playlistRepo.save(plejlista1);
 
         plejlista2.setName("Perina druga plejlista");
+        plejlista2.setCategories(new ArrayList<>(Arrays.asList(category2)));
+        plejlista2.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
+        playlistRepo.save(plejlista2);
 
+        plejlista3.setName("Ovo je random plejlista");
+        plejlista3.setCategories(new ArrayList<>(Arrays.asList(category3)));
+        plejlista3.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
+        playlistRepo.save(plejlista3);
 
         Channel channel1 = new Channel();
         channel1.setName("Perin Super Awesome kanal");
@@ -111,5 +117,12 @@ public class DataInitialization implements ApplicationRunner {
         userRepository.save(korisnik3);
         channelRepo.save(channel2);
         channelRepo.save(channel1);
+
+        channelPlaylistRepo.save(new PlaylistChannel(channel1, plejlista1, 1));
+        channelPlaylistRepo.save(new PlaylistChannel(channel1,plejlista2,2));
+
+        videoPlaylistRepo.save(new VideoPlaylist("1", video1, plejlista1, 1));
+        videoPlaylistRepo.save(new VideoPlaylist("2", video2, plejlista1, 2));
+
     }
 }

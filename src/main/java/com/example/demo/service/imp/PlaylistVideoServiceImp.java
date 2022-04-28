@@ -123,4 +123,14 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 */      log.info("Video {} order number updated", videoId);
         return playlists;
     }
+
+    @Override
+    public List<Video> videosInPlaylist(Playlist playlist) {
+        List<VideoPlaylist> vpl = videoPlaylistRepo.getVideoPlaylistsByPlaylist(playlist);
+        List<Video> videos = new ArrayList<>();
+        for(VideoPlaylist v : vpl){
+            videos.add(v.getVideo());
+        }
+        return videos;
+    }
 }

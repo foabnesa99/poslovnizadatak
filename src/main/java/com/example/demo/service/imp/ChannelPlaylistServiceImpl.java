@@ -3,7 +3,9 @@ package com.example.demo.service.imp;
 import com.example.demo.model.Channel;
 import com.example.demo.model.Playlist;
 import com.example.demo.model.PlaylistChannel;
+import com.example.demo.model.User;
 import com.example.demo.repo.ChannelPlaylistRepo;
+import com.example.demo.repo.ChannelRepo;
 import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.ChannelService;
 import com.example.demo.service.PlaylistService;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
     @Autowired
     ChannelPlaylistRepo channelPlaylistRepo;
+
 
     @Autowired
     PlaylistService playlistService;
@@ -144,5 +148,16 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
         channelPlaylistRepo.save(playlistChannel);
         log.info("Playlist added to the channel!");
         return playlistChannel;
+    }
+
+    @Override
+    public List<Playlist> findPlaylistsForUser(User user) {
+        Channel channel = channelService.getChannelByUser(user);
+        List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
+        List<Playlist> playlistList = new ArrayList<>();
+        for(PlaylistChannel p : playlistChannelList){
+            playlistList.add(p.getPlaylist());
+        }
+        return playlistList;
     }
 }

@@ -3,9 +3,11 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Channel;
 import com.example.demo.model.PlaylistChannel;
+import com.example.demo.model.User;
 import com.example.demo.repo.UserRepo;
 import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.ChannelService;
+import com.example.demo.util.SessionLoggedUserHandler;
 import com.example.demo.util.exceptions.ChannelMissingException;
 import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.PlaylistNotInChannelException;
@@ -40,10 +42,13 @@ public class ChannelController {
 
     private final ChannelPlaylistService channelPlaylistService;
 
-    public ChannelController(ChannelService channelService, UserRepo userRepo, ChannelPlaylistService channelPlaylistService) {
+    private final SessionLoggedUserHandler userHandler;
+
+    public ChannelController(ChannelService channelService, UserRepo userRepo, ChannelPlaylistService channelPlaylistService, SessionLoggedUserHandler userHandler) {
         this.channelService = channelService;
         this.userRepo = userRepo;
         this.channelPlaylistService = channelPlaylistService;
+        this.userHandler = userHandler;
     }
 
     @ApiOperation(value = "Get a list of all channels", response = ResponseEntity.class)
@@ -53,20 +58,20 @@ public class ChannelController {
     )
     @GetMapping(value = "/")
     public ModelAndView getChannels() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        userDetails.getAuthorities().forEach(element -> System.out.println(element.toString() + "ELEMENTS AUTHORITIES"));
+        User user = userHandler.getUser(SecurityContextHolder.getContext());
         ModelAndView mav = new ModelAndView("channels");
-        if (userDetails.isEnabled()){
+        if (user.getRoles().toString() == "ROLE_USER"){
             log.info("Obtaining channel for logged-in user...");
 
-            Channel channel = channelService.getChannelByUser(userRepo.findUserByUsername(userDetails.getUsername()).get());
+            Channel channel = channelService.getChannelByUser(user);
             mav.addObject("channel", channel);
-        }else{
-            log.info("User is not logged in");
+        }else if (user.getRoles().toString() == "ROLE_ADMIN"){
+            log.info("Admin logged in - obtaining all channels...");
             List<Channel> channelList = channelService.findAll();
-            mav.addObject(channelList);
+            mav.addObject("channel", channelList);
+        }
+        else {
+            log.info("User not logged in");
         }
         return mav;
 

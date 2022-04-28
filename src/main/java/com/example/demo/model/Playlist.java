@@ -32,6 +32,9 @@ public class Playlist {
     @OneToMany
     List<VideoPlaylist> videoPlaylists;
 
+    @Column
+    private String imageSrc;
+
     public Playlist(String name, List<Category> categories) {
         this.name = name;
         this.categories = categories;

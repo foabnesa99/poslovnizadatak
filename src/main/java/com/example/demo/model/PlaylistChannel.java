@@ -19,7 +19,11 @@ public class PlaylistChannel {
     @Column
     private String id;
 
-
+    public PlaylistChannel(Channel channel, Playlist playlist, Integer orderNumber) {
+        this.channel = channel;
+        this.playlist = playlist;
+        this.orderNumber = orderNumber;
+    }
 
     @ManyToOne
     private Channel channel;
