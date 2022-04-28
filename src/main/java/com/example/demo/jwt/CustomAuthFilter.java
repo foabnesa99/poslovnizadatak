@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -75,7 +76,7 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, context);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/");
         dispatcher.forward(request, response);
-
+        //RedirectView redirectView = new RedirectView("/home", true);
 
     }
 

@@ -44,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/resources/**").permitAll();
         http.authorizeRequests().antMatchers("/css/**", "/js/**", "/images/**").permitAll();
         http.headers().frameOptions().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
         http.sessionManagement().maximumSessions(10);
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/playlists/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest().authenticated();

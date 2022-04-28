@@ -2,6 +2,7 @@ package com.example.demo.service.imp;
 
 import com.example.demo.model.Channel;
 import com.example.demo.model.Playlist;
+import com.example.demo.model.User;
 import com.example.demo.repo.ChannelRepo;
 import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.service.ChannelService;
@@ -54,6 +55,15 @@ public class ChannelServiceImp implements ChannelService {
         Optional<Channel> channel = channelRepo.findById(channelId);
         if (channel.isEmpty()) {
             throw new PlaylistMissingException();
+        }
+        return channel.get();
+    }
+
+    @Override
+    public Channel getChannelByUser(User user) {
+        Optional<Channel> channel = channelRepo.getChannelByUser(user);
+        if(channel.isEmpty()){
+            throw new ChannelMissingException();
         }
         return channel.get();
     }

@@ -97,15 +97,19 @@ public class DataInitialization implements ApplicationRunner {
         channel1.setName("Perin Super Awesome kanal");
         Channel channel2 = new Channel();
         channel2.setName("Dragcetov gameplay");
-        channelRepo.save(channel2);
-        channelRepo.save(channel1);
 
         User korisnik1 = new User("Petar Petrovic" , "pera1", passwordEncoder.encode("peracar011"), UserRoles.ROLE_USER);
         User korisnik2 = new User("Dragan Milovanovic", "draganche", passwordEncoder.encode("12345678"), UserRoles.ROLE_USER);
         User korisnik3 = new User("Milan Admin" , "admin1" , passwordEncoder.encode("adminadmin") , UserRoles.ROLE_ADMIN);
 
+        channel1.setUser(korisnik1);
+        channel2.setUser(korisnik2);
+
+
         userRepository.save(korisnik1);
         userRepository.save(korisnik2);
         userRepository.save(korisnik3);
+        channelRepo.save(channel2);
+        channelRepo.save(channel1);
     }
 }

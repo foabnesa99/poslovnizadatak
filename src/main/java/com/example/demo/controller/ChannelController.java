@@ -3,6 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Channel;
 import com.example.demo.model.PlaylistChannel;
+import com.example.demo.repo.UserRepo;
 import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.ChannelService;
 import com.example.demo.util.exceptions.ChannelMissingException;
@@ -13,23 +14,35 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Api(value = "Channel Rest Controller", description = "REST API for channels")
 @RestController
 @RequestMapping(value = "/api/channels/")
+@Slf4j
 public class ChannelController {
 
     private final ChannelService channelService;
 
+    private final UserRepo userRepo;
+
     private final ChannelPlaylistService channelPlaylistService;
 
-    public ChannelController(ChannelService channelService, ChannelPlaylistService channelPlaylistService) {
+    public ChannelController(ChannelService channelService, UserRepo userRepo, ChannelPlaylistService channelPlaylistService) {
         this.channelService = channelService;
+        this.userRepo = userRepo;
         this.channelPlaylistService = channelPlaylistService;
     }
 
@@ -39,9 +52,24 @@ public class ChannelController {
     }
     )
     @GetMapping(value = "/")
-    public ResponseEntity<List<Channel>> getChannels() {
-        List<Channel> channelList = channelService.findAll();
-        return new ResponseEntity<>(channelList, HttpStatus.OK);
+    public ModelAndView getChannels() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        userDetails.getAuthorities().forEach(element -> System.out.println(element.toString() + "ELEMENTS AUTHORITIES"));
+        ModelAndView mav = new ModelAndView("channels");
+        if (userDetails.isEnabled()){
+            log.info("Obtaining channel for logged-in user...");
+
+            Channel channel = channelService.getChannelByUser(userRepo.findUserByUsername(userDetails.getUsername()).get());
+            mav.addObject("channel", channel);
+        }else{
+            log.info("User is not logged in");
+            List<Channel> channelList = channelService.findAll();
+            mav.addObject(channelList);
+        }
+        return mav;
+
     }
 
     @ApiOperation(value = "Removing a playlist from a channel", response = ResponseEntity.class)

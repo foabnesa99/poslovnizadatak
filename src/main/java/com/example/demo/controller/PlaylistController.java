@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -42,9 +43,11 @@ public class PlaylistController {
     }
     )
     @GetMapping(value = "/")
-    public ResponseEntity<List<Playlist>> getPlaylists() {
+    public ModelAndView getPlaylists() {
         List<Playlist> playlistList = playlistService.findAll();
-        return new ResponseEntity<>(playlistList, HttpStatus.OK);
+        ModelAndView mav = new ModelAndView("playlists");
+        mav.addObject(playlistList);
+        return mav;
     }
 
 

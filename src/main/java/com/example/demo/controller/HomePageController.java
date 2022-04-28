@@ -32,13 +32,6 @@ public class HomePageController {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         ModelAndView mav = new ModelAndView("homepage");
-        if(session.getAttribute("principal") != null){
-            context = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-            authentication = context.getAuthentication();
-            log.info(session.getAttribute("principal")+ "USER PRINCIPAL NAME \n");
-            return mav;
-        }
-        
         return mav;
     }
 
@@ -49,7 +42,7 @@ public class HomePageController {
     }
     @PostMapping
     public RedirectView loginHandler(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, ServletException {
-        session.setAttribute("principal" , request.getAttribute("principal"));
+        //session.setAttribute("principal" , request.getAttribute("principal"));
         return new RedirectView("/home", true);
     }
 

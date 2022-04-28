@@ -25,6 +25,7 @@ public class Channel {
     @ToString.Exclude
     private List<PlaylistChannel> playlistList;
 
+    @Column
     private String name;
 
     @ToString.Exclude

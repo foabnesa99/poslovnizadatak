@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/home" th:href="@{/home}">Home</a>
             </li>
             <li class="nav-item" th:if="!${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{loginpage.html}">Login</a>
@@ -29,7 +29,7 @@
                 <a class="nav-link" th:href="@{/api/channels/}">Channel</a>
             </li>
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-                <a class="nav-link" th:href="@{/api/playlists/}">Playlists</a>
+                <a class="nav-link" href="#">Playlists</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled" href="#">Disabled</a>
@@ -38,16 +38,27 @@
 
     </div>
 </nav>
-    <div class="main-page">
-        <h1>Ovo je homepage</h1>
-        <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-            <p>Logged user:</p>
-            <span sec:authentication="name">Lol</span>
-            <span sec:authenticatioon="principal.authorities"></span>
+<div class="main-page">
+    <h1>Vase plejliste</h1>
+    <div>
+        <div th:each="playlist : ${param.playlistList}" class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="..." class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${playlist.name}"></h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
     </div>
+
+
+</div>
 
 </body>
 </html>
