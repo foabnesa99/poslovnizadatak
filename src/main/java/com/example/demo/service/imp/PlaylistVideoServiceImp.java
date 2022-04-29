@@ -1,11 +1,13 @@
 package com.example.demo.service.imp;
 
 import com.example.demo.model.Playlist;
+import com.example.demo.model.User;
 import com.example.demo.model.Video;
 import com.example.demo.model.VideoPlaylist;
 import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.repo.VideoPlaylistRepo;
 import com.example.demo.repo.VideoRepo;
+import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
@@ -28,13 +30,15 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     private final VideoPlaylistRepo videoPlaylistRepo;
     private final VideoRepo videoRepo;
     private final PlaylistService playlistService;
+    private final ChannelPlaylistService channelPlaylistService;
 
-    public PlaylistVideoServiceImp(PlaylistRepo playlistRepo, VideoService videoService, VideoPlaylistRepo videoPlaylistRepo, VideoRepo videoRepo, PlaylistService playlistService) {
+    public PlaylistVideoServiceImp(PlaylistRepo playlistRepo, VideoService videoService, VideoPlaylistRepo videoPlaylistRepo, VideoRepo videoRepo, PlaylistService playlistService, ChannelPlaylistService channelPlaylistService) {
         this.playlistRepo = playlistRepo;
         this.videoService = videoService;
         this.videoPlaylistRepo = videoPlaylistRepo;
         this.videoRepo = videoRepo;
         this.playlistService = playlistService;
+        this.channelPlaylistService = channelPlaylistService;
     }
 
     @Override
@@ -132,5 +136,19 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
             videos.add(v.getVideo());
         }
         return videos;
+    }
+
+    @Override
+    public Set<Video> videosInUserPlaylists(User user) {
+        List<Playlist> playlists = channelPlaylistService.findPlaylistsForUser(user);
+        Set<Video> videosForUser = new HashSet<>();
+        List<VideoPlaylist> vpl;
+        for(Playlist p:playlists){
+            vpl = videoPlaylistRepo.getVideoPlaylistsByPlaylist(p);
+            for(VideoPlaylist v : vpl){
+                videosForUser.add(v.getVideo());
+            }
+        }
+        return videosForUser;
     }
 }

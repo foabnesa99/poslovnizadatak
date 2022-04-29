@@ -1,28 +1,40 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.model.User;
 import com.example.demo.model.Video;
+import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
+import com.example.demo.util.SessionLoggedUserHandler;
 import com.example.demo.util.exceptions.ResourceMissingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Set;
 
 @Api(value = "Video Rest Controller", description = "REST API for videos")
 @RestController
 @RequestMapping(value = "/api/videos")
+@Slf4j
 public class VideoController {
 
     private final VideoService videoService;
+    private final SessionLoggedUserHandler userHandler;
+    private final PlaylistVideoService playlistVideoService;
 
-    public VideoController(VideoService videoService) {
+    public VideoController(VideoService videoService, SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService) {
         this.videoService = videoService;
+        this.userHandler = userHandler;
+        this.playlistVideoService = playlistVideoService;
     }
 
     @ApiOperation(value = "Add a new video", response = ResponseEntity.class)
@@ -51,10 +63,22 @@ public class VideoController {
     }
     )
     @GetMapping(value = "/")
-    public ResponseEntity<List<Video>> getVideos() {
-        List<Video> videos = videoService.findAll();
-        return new ResponseEntity<>(videos
-                , HttpStatus.OK);
+    public ModelAndView getVideos() {
+        try{
+            User user = userHandler.getUser(SecurityContextHolder.getContext());
+            ModelAndView mav = new ModelAndView("videos");
+            Set<Video> userVideos = playlistVideoService.videosInUserPlaylists(user);
+            log.info("Fetching a list of videos that are in the user's playlists...");
+            List<Video> allVideos = videoService.findAll();
+            log.info("Fetching all videos...");
+            mav.addObject("uservideos", userVideos);
+            mav.addObject("allvideos", allVideos);
+            return mav;
+
+        }
+        catch (ResourceMissingException e){
+            return new ModelAndView("missingresource");
+        }
     }
 
     @ApiOperation(value = "Get a single video", response = ResponseEntity.class)
