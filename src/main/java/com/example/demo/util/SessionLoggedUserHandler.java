@@ -17,8 +17,8 @@ public class SessionLoggedUserHandler {
     @Autowired
     UserService userService;
 
-    public User getUser(SecurityContext context){
-        context = SecurityContextHolder.getContext();
+    public User getUser(){
+        SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return userService.findByUsername(userDetails.getUsername());

@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.service.ChannelPlaylistService;
-import com.example.demo.service.PlaylistService;
-import com.example.demo.service.PlaylistVideoService;
-import com.example.demo.service.VideoService;
+import com.example.demo.service.*;
 import com.example.demo.util.SessionLoggedUserHandler;
 import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.ResourceMissingException;
@@ -19,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(value = "Playlist Rest Controller", description = "REST API for playlists")
@@ -37,13 +36,16 @@ public class PlaylistController {
 
    private final PlaylistService playlistService;
 
+   private final ChannelService channelService;
 
-    public PlaylistController(SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService, ChannelPlaylistService channelPlaylistService, VideoService videoService, PlaylistService playlistService) {
+
+    public PlaylistController(SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService, ChannelPlaylistService channelPlaylistService, VideoService videoService, PlaylistService playlistService, ChannelService channelService) {
         this.userHandler = userHandler;
         this.playlistVideoService = playlistVideoService;
         this.channelPlaylistService = channelPlaylistService;
         this.videoService = videoService;
         this.playlistService = playlistService;
+        this.channelService = channelService;
     }
 
     @ApiOperation(value = "Get a list of all playlists", response = ResponseEntity.class)
@@ -53,7 +55,7 @@ public class PlaylistController {
     )
     @GetMapping(value = "/")
     public ModelAndView getPlaylists() {
-        User user = userHandler.getUser(SecurityContextHolder.getContext());
+        User user = userHandler.getUser();
         ModelAndView mav = new ModelAndView("playlists");
         if (user.getRoles().toString() == "ROLE_USER"){
             List<Playlist> playlistList = channelPlaylistService.findPlaylistsForUser(user);
@@ -68,6 +70,29 @@ public class PlaylistController {
             log.info("User not logged in");
         }
         return mav;
+    }
+
+    @GetMapping(value = "/add")
+    public ModelAndView newPlaylist(){
+        ModelAndView mav = new ModelAndView("newPlaylist");
+        mav.addObject(new Playlist());
+        return mav;
+    }
+
+    @PostMapping(value="/add", consumes="application/x-www-form-urlencoded")
+    public RedirectView savePlaylist(Playlist playlist) {
+        try {
+            User user = userHandler.getUser();
+            Channel channel = channelService.getChannelByUser(user);
+            playlist.setCategories(new ArrayList<>());
+            playlistService.save(playlist);
+            PlaylistChannel pcl = channelPlaylistService.addPlaylistToChannel(channel.getId(), playlist.getId());
+
+        } catch (Exception e) {
+            log.info(e.getMessage());
+
+        }
+        return new RedirectView("/api/playlists/", true);
     }
 
     @ApiOperation(value = "Get a single playlist", response = ResponseEntity.class)

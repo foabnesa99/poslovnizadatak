@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthFilter);
         http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.formLogin().loginPage("/login").defaultSuccessUrl("/", true)
+        http.formLogin().loginPage("/login").defaultSuccessUrl("/home", true)
                 .failureUrl("/login.html?error=true").and().logout().logoutUrl("/perform_logout").deleteCookies("JSESSIONID");
     }
 

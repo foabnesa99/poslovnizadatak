@@ -65,29 +65,22 @@ public class VideoServiceImp implements VideoService {
         log.info("Adding the video {} to the requested playlist {}" , videoId, playlistId);
         VideoPlaylist videoPlaylist = new VideoPlaylist();
         Optional<Playlist> playlist = playlistRepo.findById(playlistId);
-        if(playlist.isPresent()) {
-
-            videoPlaylist.setPlaylist(playlist.get());
-        }
-        else throw new PlaylistMissingException();
-
+        videoPlaylist.setPlaylist(playlist.get());
         Optional<Video> video = videoRepo.findById(videoId);
-
-        if(video.isPresent()) {
-
-            videoPlaylist.setVideo(video.get());
-        }
-       else throw new VideoMissingException();
+        videoPlaylist.setVideo(video.get());
 
         List<VideoPlaylist> allVideosInPlaylists = videoPlaylistRepo.getVideoPlaylistsByPlaylist(playlist.get());
 
         if(allVideosInPlaylists.isEmpty()){
             videoPlaylist.setOrderNumber(1);
+            log.info("Playlist is empty, adding the video to the first position");
         }
         else{
             videoPlaylist.setOrderNumber(allVideosInPlaylists.get(allVideosInPlaylists.size() - 1).getOrderNumber() + 1);
+            log.info("Adding the video to the end of the playlist");
         }
         videoPlaylistRepo.save(videoPlaylist);
+        log.info(videoPlaylist.toString() + "VPL OBJEKAT");
         log.info("Video successfully added!");
         return playlist.get();
     }

@@ -62,7 +62,6 @@ public class UserServiceImp implements UserService, UserDetailsService {
     @Override
     public User findByUsername(String username) {
         List<User> foundUsers = userRepo.findAll();
-        System.out.println("\n \n \n" + foundUsers + "\n KORISNICI \n \n");
         Optional<User> foundUser = userRepo.findUserByUsername(username);
         if (foundUser.isEmpty())throw new MissingUserException();
         return foundUser.get();
@@ -73,7 +72,6 @@ public class UserServiceImp implements UserService, UserDetailsService {
         User user = findByUsername(username);
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRoles().toString()));
-        System.out.println(authorities + "AUTHORITIES OBJ \n \n");
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }

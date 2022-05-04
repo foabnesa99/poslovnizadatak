@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.model.Playlist;
 import com.example.demo.model.User;
 import com.example.demo.model.Video;
+import com.example.demo.model.VideoPlaylist;
+import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
 import com.example.demo.util.SessionLoggedUserHandler;
@@ -13,10 +16,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Set;
@@ -31,10 +36,13 @@ public class VideoController {
     private final SessionLoggedUserHandler userHandler;
     private final PlaylistVideoService playlistVideoService;
 
-    public VideoController(VideoService videoService, SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService) {
+    private final ChannelPlaylistService channelPlaylistService;
+
+    public VideoController(VideoService videoService, SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService, ChannelPlaylistService channelPlaylistService) {
         this.videoService = videoService;
         this.userHandler = userHandler;
         this.playlistVideoService = playlistVideoService;
+        this.channelPlaylistService = channelPlaylistService;
     }
 
     @ApiOperation(value = "Add a new video", response = ResponseEntity.class)
@@ -65,7 +73,7 @@ public class VideoController {
     @GetMapping(value = "/")
     public ModelAndView getVideos() {
         try{
-            User user = userHandler.getUser(SecurityContextHolder.getContext());
+            User user = userHandler.getUser();
             ModelAndView mav = new ModelAndView("videos");
             Set<Video> userVideos = playlistVideoService.videosInUserPlaylists(user);
             log.info("Fetching a list of videos that are in the user's playlists...");
@@ -81,6 +89,28 @@ public class VideoController {
         }
     }
 
+    @ApiOperation(value = "Add a video to a playlist", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Created"),
+            @ApiResponse(code = 500, message = "Internal server error"),
+    }
+    )
+
+    @PostMapping(value="/{id}/playlist/", consumes= MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RedirectView addVideoToPlaylist(@PathVariable("id") Integer id, @RequestBody Playlist playlist) {
+        try {
+            log.info(playlist.toString() + " PLAYLIST FROM REQUEST   " + id + "  ID VIDEOA \n \n \n");
+            videoService.addVideoToPlaylist(String.valueOf(id), playlist.getId());
+            log.info("Video added to playlist");
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+
+        }
+        return new RedirectView("/api/videos/", true);
+
+    }
+
     @ApiOperation(value = "Get a single video", response = ResponseEntity.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
@@ -88,18 +118,26 @@ public class VideoController {
             @ApiResponse(code = 500, message = "Internal server error"),
     })
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Video> getVideo(@PathVariable("id") Integer id){
+    public ModelAndView getVideo(@PathVariable("id") Integer id){
         try {
-            Video video = videoService.findOne(id.toString());
-            return new ResponseEntity<>(video, HttpStatus.OK);
+            User user = userHandler.getUser();
+            List<Playlist> userPlaylists = channelPlaylistService.findPlaylistsForUser(user);
+            Video video = videoService.getVideo(String.valueOf(id));
+            Playlist selectedPlaylist = new Playlist();
+            ModelAndView mav = new ModelAndView("singleVideo");
+            mav.addObject("video", video);
+            mav.addObject("selectedPlaylist", selectedPlaylist);
+            mav.addObject("playlists", userPlaylists);
+            return mav;
 
         }
         catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ModelAndView("missingresource");
         }
 
 
     }
+
 
 
 

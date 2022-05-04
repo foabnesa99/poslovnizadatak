@@ -58,11 +58,10 @@ public class ChannelController {
     )
     @GetMapping(value = "/")
     public ModelAndView getChannels() {
-        User user = userHandler.getUser(SecurityContextHolder.getContext());
+        User user = userHandler.getUser();
         ModelAndView mav = new ModelAndView("channels");
         if (user.getRoles().toString() == "ROLE_USER"){
             log.info("Obtaining channel for logged-in user...");
-
             Channel channel = channelService.getChannelByUser(user);
             mav.addObject("channel", channel);
         }else if (user.getRoles().toString() == "ROLE_ADMIN"){

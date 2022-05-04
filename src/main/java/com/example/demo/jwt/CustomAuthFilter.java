@@ -69,14 +69,12 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
-        request.setAttribute("principal", authResult.getPrincipal());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authResult);
         HttpSession session = request.getSession();
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, context);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/");
         dispatcher.forward(request, response);
-        //RedirectView redirectView = new RedirectView("/home", true);
 
     }
 
