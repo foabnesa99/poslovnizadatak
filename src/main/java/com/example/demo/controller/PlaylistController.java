@@ -14,11 +14,14 @@ import org.redisson.api.RScript;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.websocket.server.PathParam;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Api(value = "Playlist Rest Controller", description = "REST API for playlists")
@@ -56,11 +59,15 @@ public class PlaylistController {
     @GetMapping(value = "/")
     public ModelAndView getPlaylists() {
         User user = userHandler.getUser();
+        Channel channel = channelService.getChannelByUser(user);
+        PlaylistChannel pcl = new PlaylistChannel();
         ModelAndView mav = new ModelAndView("playlists");
         if (user.getRoles().toString() == "ROLE_USER"){
             List<Playlist> playlistList = channelPlaylistService.findPlaylistsForUser(user);
             log.info("Obtaining playlists for logged-in user...  " + playlistList.size());
             mav.addObject("playlists", playlistList);
+            mav.addObject("channel", channel);
+            mav.addObject("playlistchannel", pcl);
         }else if (user.getRoles().toString() == "ROLE_ADMIN"){
             log.info("Admin logged in - obtaining all playlists...");
             List<Playlist> playlistList = playlistService.findAll();
@@ -84,7 +91,8 @@ public class PlaylistController {
         try {
             User user = userHandler.getUser();
             Channel channel = channelService.getChannelByUser(user);
-            playlist.setCategories(new ArrayList<>());
+            playlist.setCategories(new HashSet<>());
+            playlist.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
             playlistService.save(playlist);
             PlaylistChannel pcl = channelPlaylistService.addPlaylistToChannel(channel.getId(), playlist.getId());
 
@@ -104,11 +112,13 @@ public class PlaylistController {
     @GetMapping(value = "/{id}")
     public ModelAndView getPlaylist(@PathVariable("id") Integer id){
         try {
+            VideoPlaylist vpl = new VideoPlaylist();
             Playlist playlist = playlistService.getPlaylist(Integer.toString(id));
             List<Video> videosList = playlistVideoService.videosInPlaylist(playlist);
             ModelAndView mav = new ModelAndView("singlePlaylist");
             mav.addObject("videos", videosList);
             mav.addObject("playlist", playlist);
+            mav.addObject("videoplaylist", vpl);
             return mav;
         }
         catch (Exception e){
@@ -145,17 +155,17 @@ public class PlaylistController {
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 404, message = "Not Found!") })
     @RequestMapping(path = "/{playlistid}/videos/delete/{videoid}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeVideo(@PathVariable int playlistid, @PathVariable int videoid) {
+    public RedirectView removeVideo(@PathVariable int playlistid, @PathVariable int videoid) {
         try {
             playlistVideoService.removeVideoFromPlaylist(Integer.toString(playlistid), Integer.toString(videoid));
-            return new ResponseEntity<>(HttpStatus.OK);
+
         } catch (ResourceMissingException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           log.error(e.getMessage());
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error(e.getMessage());
 
         }
-
+        return new RedirectView("/api/playlists/" + playlistid, true);
     }
     @ApiOperation(value = "Add a video to a playlist", response = ResponseEntity.class)
     @ApiResponses(value = {
@@ -182,21 +192,20 @@ public class PlaylistController {
             @ApiResponse(code = 200, message = "Success|OK"),
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 404, message = "Not Found!") })
-    @RequestMapping(path = "{playlistid}/videos/{videoId}/to/{newIndex}", method = RequestMethod.PATCH)
-    public ResponseEntity<?> positionUpdate(@PathVariable int playlistid, @PathVariable int videoId, @PathVariable int newIndex) {
+    @RequestMapping(path = "{playlistid}/videos/{videoId}/to/", method = RequestMethod.POST)
+    public RedirectView positionUpdate(@PathVariable int playlistid, @PathVariable int videoId, @RequestParam String orderNumber) {
         try {
-            List<VideoPlaylist> playlist = playlistVideoService.videoIndex(Integer.toString(playlistid), Integer.toString(videoId), newIndex);
-            return new ResponseEntity<>(playlist, HttpStatus.OK);
+            List<VideoPlaylist> playlist = playlistVideoService.videoIndex(Integer.toString(playlistid), Integer.toString(videoId), Integer.valueOf(orderNumber));
         } catch (ResourceMissingException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.error(e.getMessage());
         }
        catch (IndexOutOfBoundsException e) {
-           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+           log.error(e.getMessage());
 
         }
         catch (Exception e) {
-           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
+            log.error(e.getMessage());
         }
+        return new RedirectView("/api/playlists/" + playlistid, true);
     }
 }

@@ -32,7 +32,7 @@
                 <a class="nav-link" th:href="@{/api/playlists/}">Playlists</a>
             </li>
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-                <a class="nav-link" href="#">Browse videos</a>
+                <a class="nav-link" th:href="@{/api/videos/}">Browse videos</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled" href="#">Disabled</a>
@@ -42,50 +42,19 @@
     </div>
 </nav>
 <div class="main-page">
-    <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-        <h1>Ovi video klipovi su vec dodati u neke od vasih postojecih plejlista:</h1>
+    <h1>Novi video:</h1>
+    <div id="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
 
-        <div th:each="userVideo : ${uservideos}" class="card mb-3" style="max-width: 540px;">
-            <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img class="card-img" alt="..." th:src="@{http://img.youtube.com/vi/{videoUriId}/0.jpg  (videoUriId = ${userVideo.videoUriId})}">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${userVideo.name}"></h5>
-                        <p class="card-text">Kategorije ovog videa su:</p>
-                        <p class="card-text" th:each="category : ${userVideo.categories}" th:text="${category.name}"></p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div>
-            <h5>Dodavanje novog videa:</h5>
-
-            <a th:href="@{/api/videos/add}" class="btn btn-success">Add video</a>
-
+        <div class="input-group">
+        <form action="#" th:action="@{/api/videos/add}" th:object="${video}" method="post">
+            <label for="name">Name of your video</label>
+            <input type="text" class="form-control col-mb-6" th:field="*{name}" id="name" placeholder="Name"> &nbsp; &nbsp;
+            <label for="url">YouTube URL of your video (embedded)</label>
+            <input type="text" class="form-control col-mb-6" th:field="*{url}" id="url" placeholder="URL">
+            <input type="submit" value="Add" class="form__button">
+        </form>
         </div>
 
-        <h1>Svi video klipovi:</h1>&nbsp;&nbsp;&nbsp;
-        <div class="allvids">
-        <div th:each="video : ${allvideos}" class="card mb-3" style="max-width: 540px;">
-            <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img class="card-img" alt="..." th:src="@{http://img.youtube.com/vi/{videoUriId}/0.jpg  (videoUriId = ${video.videoUriId})}">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <a th:href="@{/api/videos/{id}(id = ${video.id})}">
-                            <h5 class="card-title" th:text="${video.name}"></h5></a>
-                        <p class="card-text">Kategorije ovog videa su:</p>
-                        <p class="card-text" th:each="category : ${video.categories}" th:text="${category.name}"></p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     </div>
 
 

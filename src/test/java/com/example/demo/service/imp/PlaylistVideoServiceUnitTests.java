@@ -19,10 +19,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
@@ -58,18 +56,18 @@ public class PlaylistVideoServiceUnitTests {
     @BeforeEach
     public void dataInit(){
 
-        Playlist playlist1 = new Playlist("Prva test plejlista" , new ArrayList<>(List.of(new Category("Horror"))));
+        Playlist playlist1 = new Playlist("Prva test plejlista" , new HashSet<>(List.of(new Category("Horror"))));
         when(playlistService.getPlaylist(eq("1"))).thenReturn(playlist1);
-        Video video1 = new Video("Prvi test video", new ArrayList<>(List.of(new Category("Horror"))));
+        Video video1 = new Video("Prvi test video","url" ,new HashSet<>(List.of(new Category("Horror"))));
         video1.setId("1");
         when(videoRepo.findById(eq("1"))).thenReturn(Optional.of(video1));
-        Video video2 = new Video("Drugi test video", new ArrayList<>(List.of(new Category("Thriller"))));
+        Video video2 = new Video("Drugi test video","url" ,new HashSet<>(List.of(new Category("Thriller"))));
         video2.setId("2");
-        Video video3 = new Video("Treci test video", new ArrayList<>(List.of(new Category("Action"))));
+        Video video3 = new Video("Treci test video","url" ,new HashSet<>(List.of(new Category("Action"))));
         video3.setId("3");
-        Video video4 = new Video("Cetvrti test video", new ArrayList<>(List.of(new Category("Comedy"))));
+        Video video4 = new Video("Cetvrti test video","url" ,new HashSet<>(List.of(new Category("Comedy"))));
         video4.setId("4");
-        Video video5 = new Video("Peti test video", new ArrayList<>(List.of(new Category("Documentary"))));
+        Video video5 = new Video("Peti test video","url" ,new HashSet<>(List.of(new Category("Documentary"))));
         video5.setId("5");
 
         when(videoService.getVideo(eq("1"))).thenReturn(video1);

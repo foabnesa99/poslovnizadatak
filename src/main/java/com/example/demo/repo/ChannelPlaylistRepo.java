@@ -16,6 +16,6 @@ public interface ChannelPlaylistRepo extends JpaRepository<PlaylistChannel, Stri
     Optional<PlaylistChannel> getPlaylistChannelByChannelAndPlaylist (Channel channel, Playlist playlist);
     List<PlaylistChannel> getPlaylistChannelsByChannelAndPlaylist(Channel channel, Playlist playlist);
 
-    List<PlaylistChannel> getPlaylistChannelByChannelOrderByOrderNumber(Channel channel);
+    List<PlaylistChannel> getPlaylistChannelsByChannelOrderByOrderNumber(Channel channel);
 
 }

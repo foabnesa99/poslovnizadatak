@@ -4,6 +4,7 @@ package com.example.demo.service;
 import com.example.demo.model.Playlist;
 import com.example.demo.model.Video;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 public interface VideoService {
@@ -14,7 +15,7 @@ public interface VideoService {
 
     List<Video> findAll();
 
-    Video save(Video video);
+    Video save(Video video) throws URISyntaxException;
 
     void remove(String videoId);
 

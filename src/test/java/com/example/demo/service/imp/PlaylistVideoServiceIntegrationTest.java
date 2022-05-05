@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,13 +47,13 @@ public class PlaylistVideoServiceIntegrationTest {
 
        Category category1 = categoryRepo.save(new Category("Thriller"));
        Category category2 = categoryRepo.save(new Category("Comedy"));
-       Video video1 = new Video("Z Video macka", new ArrayList<>(List.of(category1)));
+       Video video1 = new Video("Z Video macka", "url",new HashSet<>(List.of(category1)));
        video1.setId("1");
-       Video video2 = new Video("D Video pas", new ArrayList<>(List.of(category2)));
+       Video video2 = new Video("D Video pas","url" ,new HashSet<>(List.of(category2)));
        video2.setId("2");
-       Video video5 = new Video("T Sjajan video macke kako pada u vodu", new ArrayList<>(List.of(categoryRepo.save(new Category("Horror")))));
+       Video video5 = new Video("T Sjajan video macke kako pada u vodu","url" ,new HashSet<>(List.of(categoryRepo.save(new Category("Horror")))));
        video5.setId("3");
-       Video video6 = new Video("B Video kako se penje lik", new ArrayList<>(List.of(categoryRepo.save(new Category("Action")))));
+       Video video6 = new Video("B Video kako se penje lik","url" ,new HashSet<>(List.of(categoryRepo.save(new Category("Action")))));
         video6.setId("4");
 
        videoRepo.save(video1);
@@ -60,7 +61,7 @@ public class PlaylistVideoServiceIntegrationTest {
        videoRepo.save(video5);
        videoRepo.save(video6);
 
-        Playlist playlist1 = new Playlist("Playlist 1" , new ArrayList<>(List.of(category1)));
+        Playlist playlist1 = new Playlist("Playlist 1" , new HashSet<>(List.of(category1)));
         playlist1.setId("1");
 
         playlistRepo.save(playlist1);

@@ -1,5 +1,6 @@
 package com.example.demo.service.imp;
 
+import com.example.demo.model.Category;
 import com.example.demo.model.Playlist;
 import com.example.demo.model.Video;
 import com.example.demo.model.VideoPlaylist;
@@ -10,11 +11,16 @@ import com.example.demo.service.VideoService;
 import com.example.demo.util.exceptions.PlaylistMissingException;
 import com.example.demo.util.exceptions.VideoMissingException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -49,8 +55,14 @@ public class VideoServiceImp implements VideoService {
     }
 
     @Override
-    public Video save(Video video) {
+    public Video save(Video video) throws URISyntaxException {
         log.info("Saving the video to the database...");
+        String[] parts = video.getUrl().split("/");
+        log.info("\n \n VIDEO ID LIST" + Arrays.toString(parts));
+        String videoID = parts[4];
+        video.setCategories(new HashSet<>());
+        video.setVideoUriId(videoID);
+        log.info("Video saved " + video);
         return videoRepo.save(video);
     }
 
@@ -79,6 +91,9 @@ public class VideoServiceImp implements VideoService {
             videoPlaylist.setOrderNumber(allVideosInPlaylists.get(allVideosInPlaylists.size() - 1).getOrderNumber() + 1);
             log.info("Adding the video to the end of the playlist");
         }
+        Set<Category> videoCategories = video.get().getCategories();
+        videoCategories.forEach(category -> playlist.get().getCategories().add(category));
+        playlistRepo.save(playlist.get());
         videoPlaylistRepo.save(videoPlaylist);
         log.info(videoPlaylist.toString() + "VPL OBJEKAT");
         log.info("Video successfully added!");

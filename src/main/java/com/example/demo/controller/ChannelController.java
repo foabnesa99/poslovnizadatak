@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -60,16 +61,15 @@ public class ChannelController {
     public ModelAndView getChannels() {
         User user = userHandler.getUser();
         ModelAndView mav = new ModelAndView("channels");
-        if (user.getRoles().toString() == "ROLE_USER"){
+        if (user.getRoles().toString() == "ROLE_USER") {
             log.info("Obtaining channel for logged-in user...");
             Channel channel = channelService.getChannelByUser(user);
             mav.addObject("channel", channel);
-        }else if (user.getRoles().toString() == "ROLE_ADMIN"){
+        } else if (user.getRoles().toString() == "ROLE_ADMIN") {
             log.info("Admin logged in - obtaining all channels...");
             List<Channel> channelList = channelService.findAll();
             mav.addObject("channel", channelList);
-        }
-        else {
+        } else {
             log.info("User not logged in");
         }
         return mav;
@@ -80,24 +80,25 @@ public class ChannelController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success|OK"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 404, message = "Not Found!") })
+            @ApiResponse(code = 404, message = "Not Found!")})
     @RequestMapping(path = "/{channelid}/playlists/delete/{playlistid}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removePlaylist(@PathVariable int channelid, @PathVariable int playlistid) {
+    public RedirectView removePlaylist(@PathVariable int channelid, @PathVariable int playlistid) {
         try {
             channelPlaylistService.removePlaylistFromChannel(Integer.toString(channelid), Integer.toString(playlistid));
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ResourceMissingException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
+        } catch (ResourceMissingException e) {
+            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
+        return new RedirectView("/api/playlists/", true);
     }
+
     @ApiOperation(value = "Add a playlist to a channel", response = ResponseEntity.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success|OK"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 404, message = "Not Found!") })
+            @ApiResponse(code = 404, message = "Not Found!")})
     @RequestMapping(path = "/{channelid}/playlists/add/{playlistid}", method = RequestMethod.PATCH)
     public ResponseEntity<?> addPlaylist(@PathVariable int channelid, @PathVariable int playlistid) {
 
@@ -117,17 +118,15 @@ public class ChannelController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success|OK"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 404, message = "Not Found!") })
+            @ApiResponse(code = 404, message = "Not Found!")})
     public ResponseEntity<?> channelPlaylistSort(@PathVariable String channelid) {
         try {
             List<PlaylistChannel> channels = channelPlaylistService.playlistSort(channelid);
             return new ResponseEntity<>(channels, HttpStatus.OK);
-        }
-        catch (ChannelMissingException e) {
+        } catch (ChannelMissingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -137,23 +136,20 @@ public class ChannelController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success|OK"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 404, message = "Not Found!") })
-    @RequestMapping(path = "{channelid}/playlists/{playlistid}/to/{newIndex}", method = RequestMethod.PATCH)
-    public ResponseEntity<?> positionUpdate(@PathVariable int channelid, @PathVariable int playlistid, @PathVariable int newIndex) {
+            @ApiResponse(code = 404, message = "Not Found!")})
+    @RequestMapping(path = "{channelid}/playlists/{playlistid}/to/", method = RequestMethod.POST)
+    public RedirectView positionUpdate(@PathVariable int channelid, @PathVariable int playlistid, @RequestParam String orderNumber) {
         try {
-            List<PlaylistChannel> channels = channelPlaylistService.playlistIndex(Integer.toString(channelid), Integer.toString(playlistid), newIndex);
-            return new ResponseEntity<>(channels, HttpStatus.OK);
+            List<PlaylistChannel> channels = channelPlaylistService.playlistIndex(Integer.toString(channelid), Integer.toString(playlistid), Integer.valueOf(orderNumber));
+
         } catch (ResourceMissingException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.error(e.getMessage());
+        } catch (IndexOutOfBoundsException e) {
+            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
-        catch (IndexOutOfBoundsException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        }
+        return new RedirectView("/api/playlists/", true);
     }
 
 

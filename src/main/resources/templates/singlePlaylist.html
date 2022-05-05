@@ -49,14 +49,27 @@
         <div th:each="video : ${videos}" class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
                 <div class="col-md-4">
-                    <img class="card-img" alt="...">
+                    <img class="card-img" alt="..." th:src="@{http://img.youtube.com/vi/{videoUriId}/0.jpg  (videoUriId = ${video.videoUriId})}">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${video.name}"></h5>
+                        <a th:href="@{/api/videos/{id}(id = ${video.id})}">
+                            <h5 class="card-title" th:text="${video.name}"></h5></a>
+                        <p class="card-text" th:text="${video.id}"></p>
                         <p class="card-text">Kategorije ovog videa su:</p>
                         <p class="card-text" th:each="category : ${video.categories}" th:text="${category.name}"></p>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        <form th:action="@{/api/playlists/{playlistid}/videos/delete/{videoid}/ (videoid= ${video.id} , playlistid = ${playlist.id})}" th:method="delete">
+                            <input class="btn-danger" type="submit" value="delete" />
+                        </form>
+                        <div class="input-group">
+                            <p>Update the position of the video:</p>
+                            <form action="#" th:object="${videoplaylist}"  th:action="@{/api/playlists/{playlistid}/videos/{videoid}/to/{orderNumber} (playlistid = ${playlist.id} , videoid = ${video.id} , orderNumber = ${videoplaylist.orderNumber})}" method="post">
+                                <label for="orderNumber">New position</label>
+                                <input type="text" class="form-control col-mb-6" th:field="*{orderNumber}" id="orderNumber" placeholder="New position"> &nbsp; &nbsp;
+                                <input type="submit" value="Update" class="form__button">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

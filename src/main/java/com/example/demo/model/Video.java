@@ -2,11 +2,18 @@ package com.example.demo.model;
 
 
 import lombok.*;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,9 +36,16 @@ public class Video {
 
     @ManyToMany
     @ToString.Exclude
-    private List<Category> categories;
+    private Set<Category> categories;
 
-    public Video(String name, List<Category> categories) {
+    @Column
+    private String url;
+
+    @Column
+    private String videoUriId;
+
+    public Video(String name, String url, Set<Category> categories) {
+        this.url = url;
         this.name = name;
         this.categories = categories;
     }

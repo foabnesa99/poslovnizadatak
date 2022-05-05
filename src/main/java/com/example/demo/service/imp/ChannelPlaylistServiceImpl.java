@@ -41,7 +41,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
 
         Channel channel = channelService.getChannel(channelId);
 
-        return channelPlaylistRepo.getPlaylistChannelByChannelOrderByOrderNumber(channel);
+        return channelPlaylistRepo.getPlaylistChannelsByChannelOrderByOrderNumber(channel);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
     @Override
     public List<Playlist> findPlaylistsForUser(User user) {
         Channel channel = channelService.getChannelByUser(user);
-        List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
+        List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByChannelOrderByOrderNumber(channel);
         List<Playlist> playlistList = new ArrayList<>();
         for(PlaylistChannel p : playlistChannelList){
             playlistList.add(p.getPlaylist());

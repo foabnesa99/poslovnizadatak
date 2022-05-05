@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -39,23 +36,23 @@ public class ChannelPlaylistServicePlaylistIndexTest {
     public void setUp(){
 
 
-        Playlist playlist1 = new Playlist("Prva test plejlista", new ArrayList<>(List.of(new Category("Triler"))));
+        Playlist playlist1 = new Playlist("Prva test plejlista", new HashSet<>(List.of(new Category("Triler"))));
         playlist1.setId("1");
         when(playlistService.getPlaylist(eq("1"))).
                 thenReturn(playlist1);
-        Playlist playlist2 = new Playlist("Druga test plejlista", new ArrayList<>(List.of(new Category("Akcija"))));
+        Playlist playlist2 = new Playlist("Druga test plejlista", new HashSet<>(List.of(new Category("Akcija"))));
         playlist2.setId("2");
         when(playlistService.getPlaylist(eq("2"))).
                 thenReturn(playlist2);
-        Playlist playlist3 = new Playlist("Treca test plejlista", new ArrayList<>(List.of(new Category("Horor"))));
+        Playlist playlist3 = new Playlist("Treca test plejlista", new HashSet<>(List.of(new Category("Horor"))));
         playlist3.setId("3");
         when(playlistService.getPlaylist(eq("3"))).
                 thenReturn(playlist3);
-        Playlist playlist4 = new Playlist("Cetvrta test plejlista", new ArrayList<>(List.of(new Category("Komedija"))));
+        Playlist playlist4 = new Playlist("Cetvrta test plejlista", new HashSet<>(List.of(new Category("Komedija"))));
         playlist4.setId("4");
         when(playlistService.getPlaylist(eq("4"))).
                 thenReturn(playlist4);
-        Playlist playlist5 = new Playlist("Peta test plejlista", new ArrayList<>(List.of(new Category("Dokumentarni"))));
+        Playlist playlist5 = new Playlist("Peta test plejlista", new HashSet<>(List.of(new Category("Dokumentarni"))));
         playlist5.setId("5");
         when(playlistService.getPlaylist(eq("5"))).
                 thenReturn(playlist5);

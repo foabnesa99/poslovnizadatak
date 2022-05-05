@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,11 +46,11 @@ class ChannelPlaylistServiceIntegrationTest {
     @BeforeEach
     void setUp() {
 
-        Playlist playlist1 = playlistRepo.save(new Playlist("Prva test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Horor"))))));
-        Playlist playlist2 = playlistRepo.save(new Playlist("Druga test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Akcija"))))));
-        Playlist playlist3 = playlistRepo.save(new Playlist("Treca test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Triler"))))));
-        Playlist playlist4 = playlistRepo.save(new Playlist("Cetvrta test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Komedija"))))));
-        Playlist playlist5 = playlistRepo.save(new Playlist("Peta test plejlista", new ArrayList<>(List.of(categoryRepo.save(new Category("Dokumentarni"))))));
+        Playlist playlist1 = playlistRepo.save(new Playlist("Prva test plejlista", new HashSet<>(List.of(categoryRepo.save(new Category("Horor"))))));
+        Playlist playlist2 = playlistRepo.save(new Playlist("Druga test plejlista", new HashSet<>(List.of(categoryRepo.save(new Category("Akcija"))))));
+        Playlist playlist3 = playlistRepo.save(new Playlist("Treca test plejlista", new HashSet<>(List.of(categoryRepo.save(new Category("Triler"))))));
+        Playlist playlist4 = playlistRepo.save(new Playlist("Cetvrta test plejlista", new HashSet<>(List.of(categoryRepo.save(new Category("Komedija"))))));
+        Playlist playlist5 = playlistRepo.save(new Playlist("Peta test plejlista", new HashSet<>(List.of(categoryRepo.save(new Category("Dokumentarni"))))));
 
         Channel channel1 = channelRepo.save(new Channel("Prvi kanal test", userRepo.save(new User())));
         Channel channel2 = channelRepo.save(new Channel("Drugi kanal test", userRepo.save(new User())));

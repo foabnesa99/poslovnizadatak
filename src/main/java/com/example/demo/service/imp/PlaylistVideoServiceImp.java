@@ -45,7 +45,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
     public List<VideoPlaylist> videoSort(String playlistId) {
         Playlist playlist = playlistService.getPlaylist(playlistId);
         log.info("Sorting a playlist with the id {} ...", playlistId);
-        List<VideoPlaylist> videoPlaylistList = videoPlaylistRepo.getVideoPlaylistByPlaylistOrderByOrderNumber(playlist);
+        List<VideoPlaylist> videoPlaylistList = videoPlaylistRepo.getVideoPlaylistsByPlaylistOrderByOrderNumber(playlist);
         return videoPlaylistList;
     }
 
@@ -130,7 +130,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
 
     @Override
     public List<Video> videosInPlaylist(Playlist playlist) {
-        List<VideoPlaylist> vpl = videoPlaylistRepo.getVideoPlaylistsByPlaylist(playlist);
+        List<VideoPlaylist> vpl = videoPlaylistRepo.getVideoPlaylistsByPlaylistOrderByOrderNumber(playlist);
         List<Video> videos = new ArrayList<>();
         for(VideoPlaylist v : vpl){
             videos.add(v.getVideo());
@@ -144,7 +144,7 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
         Set<Video> videosForUser = new HashSet<>();
         List<VideoPlaylist> vpl;
         for(Playlist p:playlists){
-            vpl = videoPlaylistRepo.getVideoPlaylistsByPlaylist(p);
+            vpl = videoPlaylistRepo.getVideoPlaylistsByPlaylistOrderByOrderNumber(p);
             for(VideoPlaylist v : vpl){
                 videosForUser.add(v.getVideo());
             }

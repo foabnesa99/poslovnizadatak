@@ -9,9 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Profile("prod")
@@ -55,25 +53,32 @@ public class DataInitialization implements ApplicationRunner {
         categoryRepo.save(category3);
         categoryRepo.save(category4);
 
-        List<Category> categories = new ArrayList<>();
-        List<Category> categories4 = new ArrayList<Category>(Arrays.asList(category4));
+        Set<Category> categories = new HashSet<>();
+        Set<Category> categories4 = new HashSet<Category>(Arrays.asList(category4));
         categories.add(category1);
         categories.add(category2);
 
-        List<Category> categories2 = new ArrayList<>();
+        Set<Category> categories2 = new HashSet<>();
 
         categories2.add(category3);
 
-        List<Category> categories3 = new ArrayList<>();
+        Set<Category> categories3 = new HashSet<>();
         categories3.add(category2);
 
-        Video video1 = new Video("Z Video macka", categories);
-        Video video2 = new Video("D Video pas", categories2);
-        Video video3 = new Video("E Video petao", categories4);
-        Video video4 = new Video("C Video gameplay", new ArrayList<>(Arrays.asList(category2, category3)));
-        Video video5 = new Video("T Sjajan video macke kako pada u vodu", new ArrayList<>(Arrays.asList(category1, category3)));
-        Video video6 = new Video("B Video kako se penje lik", new ArrayList<>(Arrays.asList(category1, category4)));
+        Video video1 = new Video("Drzavni Posao 1 - Rakija" , "https://www.youtube.com/embed/McwPB-eQ2BY",categories);
+        video1.setVideoUriId("McwPB-eQ2BY");
+        Video video2 = new Video("D Video pas","https://www.youtube.com/embed/kRS5A_j5ugk" ,categories2);
+        video2.setVideoUriId("kRS5A_j5ugk");
+        Video video3 = new Video("E Video petao","https://www.youtube.com/embed/6QOh6TXn-kI" ,categories4);
+        video3.setVideoUriId("6QOh6TXn-kI");
+        Video video4 = new Video("C Video gameplay", "https://www.youtube.com/embed/iNzfKn4bnMM",new HashSet<>(Arrays.asList(category2, category3)));
+        video4.setVideoUriId("iNzfKn4bnMM");
+        Video video5 = new Video("T Sjajan video macke kako pada u vodu","https://www.youtube.com/embed/PMNYG5S9LnM" ,new HashSet<>(Arrays.asList(category1, category3)));
+        video5.setVideoUriId("PMNYG5S9LnM");
+        Video video6 = new Video("B Video kako se penje lik","https://www.youtube.com/embed/2dix67H69v8" ,new HashSet<>(Arrays.asList(category1, category4)));
+        video6.setVideoUriId("2dix67H69v8");
 
+        System.out.println("\n \n \n VIDEO 1 TEST" + video1);
 
 
         videoRepo.save(video1);
@@ -85,17 +90,17 @@ public class DataInitialization implements ApplicationRunner {
 
 
         plejlista1.setName("Perina prva plejlista");
-        plejlista1.setCategories(new ArrayList<>(Arrays.asList(category1, category3, category4)));
+        plejlista1.setCategories(new HashSet<>());
         plejlista1.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
         playlistRepo.save(plejlista1);
 
         plejlista2.setName("Perina druga plejlista");
-        plejlista2.setCategories(new ArrayList<>(Arrays.asList(category2)));
+        plejlista2.setCategories(new HashSet<>());
         plejlista2.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
         playlistRepo.save(plejlista2);
 
         plejlista3.setName("Ovo je random plejlista");
-        plejlista3.setCategories(new ArrayList<>(Arrays.asList(category3)));
+        plejlista3.setCategories(new HashSet<>());
         plejlista3.setImageSrc("http://simpleicon.com/wp-content/uploads/playlist.png");
         playlistRepo.save(plejlista3);
 

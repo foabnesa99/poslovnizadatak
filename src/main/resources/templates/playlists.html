@@ -43,13 +43,8 @@
 </nav>
 <div class="main-page">
     <h1>Vase plejliste</h1>
-    <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-        <div>
-            <h5>Dodavanje nove plejliste:</h5>
+    <div id ="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
 
-                <a th:href="@{newPlaylist.html}">Add playlist</a>
-
-        </div>
 
         <div th:each="playlist : ${playlists}" class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
@@ -63,9 +58,27 @@
                         <p class="card-text">Kategorije ove plejliste su:</p>
                         <p class="card-text" th:each="category : ${playlist.categories}" th:text="${category.name}"></p>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        <form th:action="@{/api/channels/{channelid}/playlists/delete/{playlistid}/ (channelid= ${channel.id} , playlistid = ${playlist.id})}" th:method="delete">
+                            <input class="btn-danger" type="submit" value="delete" />
+                        </form>
+                        <div class="input-group">
+                            <p>Update the position of the playlist:</p>
+                            <form action="#" th:object="${playlistchannel}"  th:action="@{/api/channels/{channelid}/playlists/{playlistid}/to/{newindex} (channelid = ${channel.id} , playlistid = ${playlist.id}, newindex = ${playlistchannel.orderNumber})}" method="post">
+                                <label for="pclOrderNumber">New position</label>
+                                <input type="text" class="form-control col-mb-6" th:field="*{orderNumber}" id="pclOrderNumber" placeholder="New position"> &nbsp; &nbsp;
+                                <input type="submit" value="Update" class="form__button">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div>
+            <h5>Dodavanje nove plejliste:</h5>
+
+            <a th:href="@{/api/playlists/add}" class="btn btn-success">Add playlist</a>
+
         </div>
     </div>
 

@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.model.Playlist;
-import com.example.demo.model.User;
-import com.example.demo.model.Video;
-import com.example.demo.model.VideoPlaylist;
+import com.example.demo.model.*;
 import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,25 +43,6 @@ public class VideoController {
         this.channelPlaylistService = channelPlaylistService;
     }
 
-    @ApiOperation(value = "Add a new video", response = ResponseEntity.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Created"),
-            @ApiResponse(code = 500, message = "Internal server error"),
-    }
-    )
-
-    @PostMapping(value="/add", consumes="application/json")
-    public ResponseEntity<Video> saveVideo(@RequestBody Video video) {
-        try {
-            videoService.save(video);
-            return new ResponseEntity<>(video, HttpStatus.CREATED);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        }
-
-    }
 
     @ApiOperation(value = "Get a list of all videos", response = ResponseEntity.class)
     @ApiResponses(value = {
@@ -89,6 +68,23 @@ public class VideoController {
         }
     }
 
+    @GetMapping(value = "/add")
+    public ModelAndView newVideo(){
+        ModelAndView mav = new ModelAndView("addVideo");
+        mav.addObject(new Video());
+        return mav;
+    }
+    @PostMapping(value="/add", consumes="application/x-www-form-urlencoded")
+    public RedirectView saveVideo(Video video) {
+        try {
+            videoService.save(video);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+
+        }
+        return new RedirectView("/api/videos/", true);
+    }
+
     @ApiOperation(value = "Add a video to a playlist", response = ResponseEntity.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
@@ -97,7 +93,7 @@ public class VideoController {
     )
 
     @PostMapping(value="/{id}/playlist/", consumes= MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public RedirectView addVideoToPlaylist(@PathVariable("id") Integer id, @RequestBody Playlist playlist) {
+    public RedirectView addVideoToPlaylist(@PathVariable("id") Integer id, @ModelAttribute Playlist playlist) {
         try {
             log.info(playlist.toString() + " PLAYLIST FROM REQUEST   " + id + "  ID VIDEOA \n \n \n");
             videoService.addVideoToPlaylist(String.valueOf(id), playlist.getId());
