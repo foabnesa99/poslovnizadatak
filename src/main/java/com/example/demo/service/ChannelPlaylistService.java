@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ChannelPlaylistService {
 
+    List<PlaylistChannel> getPlaylistChannelByPlaylist(Playlist playlist);
+
     List<PlaylistChannel> playlistSort(String channelId);
 
     List<PlaylistChannel> removePlaylistFromChannel (String channelId, String playlistId);
@@ -18,4 +20,8 @@ public interface ChannelPlaylistService {
     PlaylistChannel addPlaylistToChannel(String channelId, String playlistId);
 
     List<Playlist> findPlaylistsForUser(User user);
+
+    void deletePlaylist(String playlistId);
+
+    void deleteChannel(String channelId);
 }

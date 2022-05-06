@@ -14,16 +14,16 @@
     margin-top: 50px;
 }
 
-#mainDiv > * {
+.mainDiv > * {
     display: block;
-    margin-top: 30px;
+    margin-top: 15px;
 }
 
-#mainDiv > *:first-child {
+.mainDiv > *:first-child {
     margin-top: 0px;
 }
 
 .input-group *{
     display: block;
-    margin-top: 30px;
+    margin-top: 15px;
 }

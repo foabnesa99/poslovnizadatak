@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.model.Category;
 import com.example.demo.model.Channel;
 import com.example.demo.model.PlaylistChannel;
 import com.example.demo.model.User;
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RScript;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -75,6 +77,55 @@ public class ChannelController {
         return mav;
 
     }
+
+    @GetMapping(value = "/edit/{id}")
+    public ModelAndView editChannel(@PathVariable Integer id){
+        ModelAndView mav = new ModelAndView("updateChannelName");
+        Channel channel = channelService.getChannel(String.valueOf(id));
+        mav.addObject("channel", channel);
+        return mav;
+    }
+
+    @ApiOperation(value = "Editing a channel", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful | OK"),
+            @ApiResponse(code = 404, message="Not found"),
+            @ApiResponse(code = 500, message = "Internal server error"),
+    }
+    )
+
+    @PostMapping (value="/edit/{id}", consumes="application/x-www-form-urlencoded")
+    public RedirectView updateChannel(Channel editChannel, @PathVariable("id") Integer id) {
+        try {
+            Channel channel = channelService.getChannel(String.valueOf(id));
+            channel.setName(editChannel.getName());
+            channelService.save(channel);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+
+        }
+        return new RedirectView("/api/channels/");
+    }
+
+    @ApiOperation(value = "Removing a channel", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success|OK"),
+            @ApiResponse(code = 404, message = "Not found"),
+    }
+    )
+    @DeleteMapping(value="/{id}")
+    public RedirectView deleteChannel(@PathVariable("id") Integer id){
+
+        try {
+            channelPlaylistService.deleteChannel(String.valueOf(id));
+
+        }catch (ResourceMissingException e){
+            log.error(e.getMessage());
+        }
+        return new RedirectView("/api/channels/", true);
+    }
+
 
     @ApiOperation(value = "Removing a playlist from a channel", response = ResponseEntity.class)
     @ApiResponses(value = {

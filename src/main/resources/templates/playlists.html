@@ -42,9 +42,9 @@
     </div>
 </nav>
 <div class="main-page">
-    <h1>Vase plejliste</h1>
-    <div id ="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
 
+    <div class ="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+        <h1>Vase plejliste</h1>
 
         <div th:each="playlist : ${playlists}" class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
@@ -83,6 +83,30 @@
     </div>
 
 
+</div>
+
+<div id ="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+    <h1>Sve plejliste</h1>
+    <div th:each="playlist : ${playlists}" class="card mb-3" style="max-width: 540px;">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img th:src="${playlist.imageSrc}" class="card-img" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body"><a th:href="@{/api/playlists/{id}(id = ${playlist.id})}">
+                    <h5 class="card-title" th:text="${playlist.name}"></h5>
+                </a>
+                    <p class="card-text">Kategorije ove plejliste su:</p>
+                    <p class="card-text" th:each="category : ${playlist.categories}" th:text="${category.name}"></p>
+                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    <form th:method="delete" th:object="${playlist}" th:action="@{/api/playlists/{playlistid} (playlistid = ${playlist.id})}">
+                        <input class="btn-danger" type="submit" value="delete" />
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

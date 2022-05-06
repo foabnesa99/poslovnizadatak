@@ -36,6 +36,11 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
     PlaylistService playlistService;
 
     @Override
+    public List<PlaylistChannel> getPlaylistChannelByPlaylist(Playlist playlist) {
+        return channelPlaylistRepo.getPlaylistChannelsByPlaylist(playlist);
+    }
+
+    @Override
     public List<PlaylistChannel> playlistSort(String channelId) {
         log.info("Sorting a channel with the id {} ...", channelId);
 
@@ -159,5 +164,25 @@ public class ChannelPlaylistServiceImpl implements ChannelPlaylistService {
             playlistList.add(p.getPlaylist());
         }
         return playlistList;
+    }
+
+    @Override
+    public void deletePlaylist(String playlistId) {
+        Playlist playlist = playlistService.getPlaylist(playlistId);
+        List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByPlaylist(playlist);
+        for(PlaylistChannel p : playlistChannelList){
+            removePlaylistFromChannel(p.getChannel().getId(), playlistId);
+        }
+        playlistService.remove(playlistId);
+    }
+
+    @Override
+    public void deleteChannel(String channelId) {
+        Channel channel = channelService.getChannel(channelId);
+        List<PlaylistChannel> playlistChannelList = channelPlaylistRepo.getPlaylistChannelsByChannel(channel);
+        for(PlaylistChannel p :playlistChannelList){
+            removePlaylistFromChannel(channelId, p.getPlaylist().getId());
+        }
+        channelService.remove(channelId);
     }
 }

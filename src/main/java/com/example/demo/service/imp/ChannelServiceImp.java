@@ -25,11 +25,7 @@ public class ChannelServiceImp implements ChannelService {
     @Autowired
     ChannelRepo channelRepo;
 
-    @Autowired
-    PlaylistService playlistService;
 
-    @Autowired
-    PlaylistRepo playlistRepo;
 
     @Override
     public List<Channel> findAll() {

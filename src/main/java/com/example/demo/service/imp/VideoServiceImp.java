@@ -60,7 +60,6 @@ public class VideoServiceImp implements VideoService {
         String[] parts = video.getUrl().split("/");
         log.info("\n \n VIDEO ID LIST" + Arrays.toString(parts));
         String videoID = parts[4];
-        video.setCategories(new HashSet<>());
         video.setVideoUriId(videoID);
         log.info("Video saved " + video);
         return videoRepo.save(video);

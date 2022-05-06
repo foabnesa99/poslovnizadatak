@@ -31,7 +31,7 @@ public class Video {
     private String name;
 
     @ToString.Exclude
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     List<VideoPlaylist> videoPlaylists;
 
     @ManyToMany

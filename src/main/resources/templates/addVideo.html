@@ -43,7 +43,7 @@
 </nav>
 <div class="main-page">
     <h1>Novi video:</h1>
-    <div id="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+    <div class="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
 
         <div class="input-group">
         <form action="#" th:action="@{/api/videos/add}" th:object="${video}" method="post">
@@ -51,6 +51,15 @@
             <input type="text" class="form-control col-mb-6" th:field="*{name}" id="name" placeholder="Name"> &nbsp; &nbsp;
             <label for="url">YouTube URL of your video (embedded)</label>
             <input type="text" class="form-control col-mb-6" th:field="*{url}" id="url" placeholder="URL">
+            <tr>
+                <td>Kategorije: </td>
+                <td>
+                    <th:block th:each="category : ${categories}">
+                        <label th:text="${category.name}"></label>
+                        <input type="checkbox" name="categories" th:value="${category.id}" th:field="*{categories}"/>
+                    </th:block>
+                </td>
+            </tr>
             <input type="submit" value="Add" class="form__button">
         </form>
         </div>

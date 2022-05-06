@@ -42,7 +42,7 @@
     </div>
 </nav>
 <div class="main-page">
-    <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+    <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
         <h1>Ovi video klipovi su vec dodati u neke od vasih postojecih plejlista:</h1>
 
         <div th:each="userVideo : ${uservideos}" class="card mb-3" style="max-width: 540px;">
@@ -52,7 +52,8 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${userVideo.name}"></h5>
+                        <a th:href="@{/api/videos/{id}(id = ${userVideo.id})}">
+                            <h5 class="card-title" th:text="${userVideo.name}"></h5></a>
                         <p class="card-text">Kategorije ovog videa su:</p>
                         <p class="card-text" th:each="category : ${userVideo.categories}" th:text="${category.name}"></p>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
@@ -88,6 +89,28 @@
     </div>
     </div>
 
+    <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+        <div th:each="video : ${allvideos}" class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img class="card-img" alt="..." th:src="@{http://img.youtube.com/vi/{videoUriId}/0.jpg  (videoUriId = ${video.videoUriId})}">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <a th:href="@{/api/videos/{id}(id = ${video.id})}">
+                            <h5 class="card-title" th:text="${video.name}"></h5></a>
+                        <p class="card-text">Kategorije ovog videa su:</p>
+                        <p class="card-text" th:each="category : ${video.categories}" th:text="${category.name}"></p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        <form th:method="delete" th:object="${video}" th:action="@{/api/videos/{videoid} (videoid = ${video.id})}">
+                            <input class="btn-danger" type="submit" value="delete" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 </div>
 

@@ -59,10 +59,10 @@ public class PlaylistController {
     @GetMapping(value = "/")
     public ModelAndView getPlaylists() {
         User user = userHandler.getUser();
-        Channel channel = channelService.getChannelByUser(user);
         PlaylistChannel pcl = new PlaylistChannel();
         ModelAndView mav = new ModelAndView("playlists");
         if (user.getRoles().toString() == "ROLE_USER"){
+            Channel channel = channelService.getChannelByUser(user);
             List<Playlist> playlistList = channelPlaylistService.findPlaylistsForUser(user);
             log.info("Obtaining playlists for logged-in user...  " + playlistList.size());
             mav.addObject("playlists", playlistList);
@@ -184,6 +184,23 @@ public class PlaylistController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+    }
+
+    @ApiOperation(value = "Removing a playlist", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success|OK"),
+            @ApiResponse(code = 404, message = "Not found"),
+    }
+    )
+    @DeleteMapping(value="/{id}")
+    public RedirectView deletePlaylist(@PathVariable Integer id){
+        try{
+            channelPlaylistService.deletePlaylist(String.valueOf(id));
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return new RedirectView("/api/playlists/", true);
     }
 
 

@@ -26,7 +26,7 @@
         <a class="nav-link" th:href="@{/perform_logout}" th:action="@{/perform_logout}">Log out</a>
       </li>
       <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-        <a class="nav-link" href="#">Channels</a>
+        <a class="nav-link" th:href="@{/api/channels/}">Channels</a>
       </li>
       <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
         <a class="nav-link" th:href="@{/api/playlists/}">Playlists</a>
@@ -42,22 +42,13 @@
   </div>
 </nav>
 <div class="main-page">
-
-  <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
-    <h1>Ovo je vas kanal</h1>
-    <p th:text="${channel.name}"></p>
-    <a class="btn btn-info" th:href="@{/api/channels/edit/{id} (id=${channel.id})}">Update</a>
+  <div class="input-group">
+    <form action="#" th:action="@{/api/channels/edit/{id} (id=${channel.id})}" th:object="${channel}" method="post">
+      <label for="name">Name of your channel</label>
+      <input type="text" class="form-control col-mb-6" th:field="*{name}" id="name" placeholder="Name"> &nbsp; &nbsp;
+      <input type="submit" value="Update" class="form__button">
+    </form>
   </div>
-  <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-    <h1>Ovo su svi kanali</h1>
-    <div th:each="ch : ${channel}">
-    <h5 th:text="${ch.name}"></h5>
-      <form th:method="delete" th:object="${ch}" th:action="@{/api/channels/{channelid} (channelid = ${ch.id})}">
-        <input class="btn btn-danger" type="submit" value="delete" />
-      </form>
-    </div>
-  </div>
-
 
 </div>
 

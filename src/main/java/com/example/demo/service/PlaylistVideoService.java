@@ -11,7 +11,7 @@ import java.util.Set;
 public interface PlaylistVideoService {
 
 
-
+    void removeVideo(String videoId);
     List<VideoPlaylist> videoSort(String playlistId);
 
     List<VideoPlaylist> removeVideoFromPlaylist (String playlistId, String videoId);

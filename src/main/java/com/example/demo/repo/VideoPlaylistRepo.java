@@ -16,7 +16,7 @@ public interface VideoPlaylistRepo extends JpaRepository<VideoPlaylist, String> 
 
     List<VideoPlaylist> getVideoPlaylistsByPlaylist(Playlist playlist);
 
-    VideoPlaylist getVideoPlaylistByVideo(Video video);
+    List<VideoPlaylist> getVideoPlaylistsByVideo(Video video);
 
     Optional<VideoPlaylist> getVideoPlaylistByPlaylistAndVideo(Playlist playlist, Video video);
 

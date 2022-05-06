@@ -1,9 +1,6 @@
 package com.example.demo.service.imp;
 
-import com.example.demo.model.Playlist;
-import com.example.demo.model.User;
-import com.example.demo.model.Video;
-import com.example.demo.model.VideoPlaylist;
+import com.example.demo.model.*;
 import com.example.demo.repo.PlaylistRepo;
 import com.example.demo.repo.VideoPlaylistRepo;
 import com.example.demo.repo.VideoRepo;
@@ -39,6 +36,18 @@ public class PlaylistVideoServiceImp implements PlaylistVideoService {
         this.videoRepo = videoRepo;
         this.playlistService = playlistService;
         this.channelPlaylistService = channelPlaylistService;
+    }
+
+    @Override
+    public void removeVideo(String videoId) {
+        Video video = videoService.getVideo(videoId);
+        List<VideoPlaylist> vpl = videoPlaylistRepo.getVideoPlaylistsByVideo(video);
+        if(!vpl.isEmpty()) {
+            for (VideoPlaylist v : vpl) {
+                removeVideoFromPlaylist(v.getPlaylist().getId(), videoId);
+            }
+        }
+        videoService.remove(videoId);
     }
 
     @Override

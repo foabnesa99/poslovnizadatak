@@ -30,7 +30,7 @@ public class Playlist {
     private List<PlaylistChannel> playlistChannels;
 
     @ToString.Exclude
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     List<VideoPlaylist> videoPlaylists;
 
     @Column

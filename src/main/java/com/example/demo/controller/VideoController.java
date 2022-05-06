@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import com.example.demo.model.*;
+import com.example.demo.service.CategoryService;
 import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.PlaylistVideoService;
 import com.example.demo.service.VideoService;
@@ -36,13 +37,15 @@ public class VideoController {
 
     private final ChannelPlaylistService channelPlaylistService;
 
-    public VideoController(VideoService videoService, SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService, ChannelPlaylistService channelPlaylistService) {
+    private final CategoryService categoryService;
+
+    public VideoController(VideoService videoService, SessionLoggedUserHandler userHandler, PlaylistVideoService playlistVideoService, ChannelPlaylistService channelPlaylistService, CategoryService categoryService) {
         this.videoService = videoService;
         this.userHandler = userHandler;
         this.playlistVideoService = playlistVideoService;
         this.channelPlaylistService = channelPlaylistService;
+        this.categoryService = categoryService;
     }
-
 
     @ApiOperation(value = "Get a list of all videos", response = ResponseEntity.class)
     @ApiResponses(value = {
@@ -54,11 +57,13 @@ public class VideoController {
         try{
             User user = userHandler.getUser();
             ModelAndView mav = new ModelAndView("videos");
-            Set<Video> userVideos = playlistVideoService.videosInUserPlaylists(user);
-            log.info("Fetching a list of videos that are in the user's playlists...");
+            if(user.getRoles().toString() == "ROLE_USER") {
+                Set<Video> userVideos = playlistVideoService.videosInUserPlaylists(user);
+                log.info("Fetching a list of videos that are in the user's playlists...");
+                mav.addObject("uservideos", userVideos);
+            }
             List<Video> allVideos = videoService.findAll();
             log.info("Fetching all videos...");
-            mav.addObject("uservideos", userVideos);
             mav.addObject("allvideos", allVideos);
             return mav;
 
@@ -70,13 +75,16 @@ public class VideoController {
 
     @GetMapping(value = "/add")
     public ModelAndView newVideo(){
+        List<Category> categories = categoryService.findAll();
         ModelAndView mav = new ModelAndView("addVideo");
+        mav.addObject("categories", categories);
         mav.addObject(new Video());
         return mav;
     }
     @PostMapping(value="/add", consumes="application/x-www-form-urlencoded")
     public RedirectView saveVideo(Video video) {
         try {
+            log.info("Saving the video...");
             videoService.save(video);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -169,15 +177,16 @@ public class VideoController {
     }
     )
     @DeleteMapping(value="/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Integer id){
+    public RedirectView deleteVideo(@PathVariable("id") Integer id){
 
         try {
             Video video = videoService.findOne(id.toString());
-            videoService.remove(video.getId());
-            return new ResponseEntity<>(HttpStatus.OK);
+            playlistVideoService.removeVideo(video.getId());
+
         }catch (ResourceMissingException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.error(e.getMessage());
         }
+        return new RedirectView("/api/videos/", true);
     }
 
 }

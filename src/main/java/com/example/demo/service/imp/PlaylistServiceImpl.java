@@ -1,7 +1,10 @@
 package com.example.demo.service.imp;
 
 import com.example.demo.model.Playlist;
+import com.example.demo.model.PlaylistChannel;
+import com.example.demo.repo.ChannelPlaylistRepo;
 import com.example.demo.repo.PlaylistRepo;
+import com.example.demo.service.ChannelPlaylistService;
 import com.example.demo.service.PlaylistService;
 import com.example.demo.util.exceptions.PlaylistMissingException;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,9 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Autowired
     PlaylistRepo playlistRepo;
 
+    @Autowired
+    ChannelPlaylistRepo channelPlaylistRepo;
+
     @Override
     public List<Playlist> findAll() {
         log.info("Retrieving a list of all playlists...");
@@ -33,7 +39,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public void remove(String playlistId) {
         log.info("Removing the playlist from the database...");
-        playlistRepo.deleteById(getPlaylist(playlistId).getId());
+        playlistRepo.deleteById(playlistId);
     }
 
     @Override

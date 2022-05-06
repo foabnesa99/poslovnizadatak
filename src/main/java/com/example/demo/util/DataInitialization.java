@@ -43,10 +43,10 @@ public class DataInitialization implements ApplicationRunner {
         Playlist plejlista2 = new Playlist();
         Playlist plejlista3 = new Playlist();
 
-        Category category1 = new Category("Thriller");
-        Category category2 = new Category( "Comedy");
-        Category category3 = new Category("Action");
-        Category category4 = new Category("Horror");
+        Category category1 = new Category("Triler");
+        Category category2 = new Category( "Komedija");
+        Category category3 = new Category("Akcija");
+        Category category4 = new Category("Horor");
 
         categoryRepo.save(category1);
         categoryRepo.save(category2);
@@ -65,17 +65,17 @@ public class DataInitialization implements ApplicationRunner {
         Set<Category> categories3 = new HashSet<>();
         categories3.add(category2);
 
-        Video video1 = new Video("Drzavni Posao 1 - Rakija" , "https://www.youtube.com/embed/McwPB-eQ2BY",categories);
+        Video video1 = new Video("Drzavni Posao - Ep.1: Rakija" , "https://www.youtube.com/embed/McwPB-eQ2BY",categories);
         video1.setVideoUriId("McwPB-eQ2BY");
-        Video video2 = new Video("D Video pas","https://www.youtube.com/embed/kRS5A_j5ugk" ,categories2);
+        Video video2 = new Video("Drzavni Posao - Ep.13: Cili Vili hod","https://www.youtube.com/embed/kRS5A_j5ugk" ,categories2);
         video2.setVideoUriId("kRS5A_j5ugk");
-        Video video3 = new Video("E Video petao","https://www.youtube.com/embed/6QOh6TXn-kI" ,categories4);
+        Video video3 = new Video("Drzavni Posao - Ep.16: SMS","https://www.youtube.com/embed/6QOh6TXn-kI" ,categories4);
         video3.setVideoUriId("6QOh6TXn-kI");
-        Video video4 = new Video("C Video gameplay", "https://www.youtube.com/embed/iNzfKn4bnMM",new HashSet<>(Arrays.asList(category2, category3)));
+        Video video4 = new Video("Drzavni Posao - Ep.21: San", "https://www.youtube.com/embed/iNzfKn4bnMM",new HashSet<>(Arrays.asList(category2, category3)));
         video4.setVideoUriId("iNzfKn4bnMM");
-        Video video5 = new Video("T Sjajan video macke kako pada u vodu","https://www.youtube.com/embed/PMNYG5S9LnM" ,new HashSet<>(Arrays.asList(category1, category3)));
+        Video video5 = new Video("Drzavni Posao - Ep.26: Sistematizacija","https://www.youtube.com/embed/PMNYG5S9LnM" ,new HashSet<>(Arrays.asList(category1, category3)));
         video5.setVideoUriId("PMNYG5S9LnM");
-        Video video6 = new Video("B Video kako se penje lik","https://www.youtube.com/embed/2dix67H69v8" ,new HashSet<>(Arrays.asList(category1, category4)));
+        Video video6 = new Video("Drzavni Posao - Ep.49: Nabavka","https://www.youtube.com/embed/2dix67H69v8" ,new HashSet<>(Arrays.asList(category1, category4)));
         video6.setVideoUriId("2dix67H69v8");
 
         System.out.println("\n \n \n VIDEO 1 TEST" + video1);
