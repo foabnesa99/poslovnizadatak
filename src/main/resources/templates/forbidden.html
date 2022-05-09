@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" th:href="@{/home}">Home</a>
             </li>
             <li class="nav-item" th:if="!${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{loginpage.html}">Login</a>
@@ -26,7 +26,7 @@
                 <a class="nav-link" th:href="@{/perform_logout}" th:action="@{/perform_logout}">Log out</a>
             </li>
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-                <a class="nav-link" th:href="@{/api/channels/}">Channel</a>
+                <a class="nav-link" th:href="@{/api/channels/}">Channels</a>
             </li>
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/api/playlists/}">Playlists</a>
@@ -34,21 +34,14 @@
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/api/videos/}">Browse videos</a>
             </li>
-
         </ul>
 
     </div>
 </nav>
-    <div class="main-page">
-        <h1>Ovo je homepage</h1>
-        <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-            <p>Logged user:</p>
-            <span sec:authentication="name">Lol</span>
-            <span sec:authenticatioon="principal.authorities"></span>
-        </div>
+<div class="main-page">
+    <h2>You don't have the permission to access this page!</h2>
 
-
-    </div>
+</div>
 
 </body>
 </html>

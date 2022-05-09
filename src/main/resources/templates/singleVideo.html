@@ -34,19 +34,22 @@
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/api/videos/}">Browse videos</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
         </ul>
 
     </div>
 </nav>
 <div class="main-page">
     <h1>Video:</h1>
+
     <div id="mainDiv" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+        <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+            <a class="btn btn-info" th:href="@{/api/videos/edit/{id} (id=${video.id})}">Edit</a>
+        </div>
+
         <h2 th:text="${video.name}"></h2>
         <iframe width="560" height="315" src="#" th:src="${video.url}" title="YouTube video player" frameborder="0"> </iframe>
-
+        <p class="card-text">Kategorije ovog videa su:</p>
+        <p class="card-text" th:each="category : ${video.categories}" th:text="${category.name}"></p>
         <h5>Dodavanje videa u vasu plejlistu:</h5>
         <form action="#" th:action="@{/api/videos/{id}/playlist/ (id = ${video.id})}" th:object="${selectedPlaylist}" method="post">
             <select th:field="*{id}">

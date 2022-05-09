@@ -34,18 +34,16 @@
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/api/videos/}">Browse videos</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
         </ul>
 
     </div>
 </nav>
 <div class="main-page">
-    <h1>Plejlista:</h1>
+
     <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
 
-
+        <h2 th:text="${playlist.name}"></h2>
+        <a class="btn btn-info" th:href="@{/api/playlists/edit/{id} (id=${playlist.id})}">Edit</a>
         <div th:each="video : ${videos}" class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
                 <div class="col-md-4">

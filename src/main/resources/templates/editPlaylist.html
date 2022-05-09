@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" th:href="@{/home}">Home</a>
             </li>
             <li class="nav-item" th:if="!${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{loginpage.html}">Login</a>
@@ -26,7 +26,7 @@
                 <a class="nav-link" th:href="@{/perform_logout}" th:action="@{/perform_logout}">Log out</a>
             </li>
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-                <a class="nav-link" th:href="@{/api/channels/}">Channel</a>
+                <a class="nav-link" th:href="@{/api/channels/}">Channels</a>
             </li>
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/api/playlists/}">Playlists</a>
@@ -34,21 +34,20 @@
             <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                 <a class="nav-link" th:href="@{/api/videos/}">Browse videos</a>
             </li>
-
         </ul>
 
     </div>
 </nav>
-    <div class="main-page">
-        <h1>Ovo je homepage</h1>
-        <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')') or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-            <p>Logged user:</p>
-            <span sec:authentication="name">Lol</span>
-            <span sec:authenticatioon="principal.authorities"></span>
-        </div>
-
-
+<div class="main-page">
+    <div class="input-group">
+        <form action="#" th:action="@{/api/playlists/edit/{id} (id=${playlist.id})}" th:object="${playlist}" method="post">
+            <label for="name">Name of your playlist</label>
+            <input type="text" class="form-control col-mb-6" th:field="*{name}" id="name" placeholder="Name"> &nbsp; &nbsp;
+            <input type="submit" value="Update" class="form__button">
+        </form>
     </div>
+
+</div>
 
 </body>
 </html>

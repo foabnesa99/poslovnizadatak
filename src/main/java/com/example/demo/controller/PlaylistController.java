@@ -86,6 +86,36 @@ public class PlaylistController {
         return mav;
     }
 
+    @GetMapping(value = "/edit/{id}")
+    public ModelAndView editPlaylist(@PathVariable Integer id){
+        ModelAndView mav = new ModelAndView("editPlaylist");
+        Playlist playlist = playlistService.getPlaylist(String.valueOf(id));
+        mav.addObject("playlist", playlist);
+        return mav;
+    }
+
+    @ApiOperation(value = "Editing a playlist", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful | OK"),
+            @ApiResponse(code = 404, message="Not found"),
+            @ApiResponse(code = 500, message = "Internal server error"),
+    }
+    )
+
+    @PostMapping (value="/edit/{id}", consumes="application/x-www-form-urlencoded")
+    public RedirectView updatePlaylist(Playlist playlistUpdate, @PathVariable("id") Integer id) {
+        try {
+            Playlist playlist = playlistService.getPlaylist(String.valueOf(id));
+            playlist.setName(playlistUpdate.getName());
+            playlistService.save(playlist);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+
+        }
+        return new RedirectView("/api/playlists/" + id, true);
+    }
+
     @PostMapping(value="/add", consumes="application/x-www-form-urlencoded")
     public RedirectView savePlaylist(Playlist playlist) {
         try {

@@ -1,0 +1,24 @@
+
+GET http://localhost:8080/api/playlists/
+
+###
+
+GET http://localhost:8080/api/playlists/add/
+
+###
+POST http://localhost:8080/api/playlists/add
+Content-Type: application/x-www-form-urlencoded
+
+name=playlist name
+
+###
+
+GET http://localhost:8080/api/videos/1/
+
+###
+
+POST http://localhost:8080/api/videos/1/playlist/
+Content-Type: application/x-www-form-urlencoded
+
+selectedPlaylist=1
+

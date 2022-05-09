@@ -1,0 +1,12 @@
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=pera1&password=peracar011
+
+###
+
+GET http://localhost:8080/api/playlists
+
+###
+
+DELETE http://localhost:8080/api/playlists/1

@@ -24,6 +24,11 @@ public class HomePageController {
         return mav;
     }
 
+    @GetMapping("/forbidden")
+    public ModelAndView forbiddenPage(){
+        return new ModelAndView("forbidden");
+    }
+
     @GetMapping("/login")
     public ModelAndView login(){
         ModelAndView mav = new ModelAndView("loginpage");

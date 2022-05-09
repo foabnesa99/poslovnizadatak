@@ -1,0 +1,17 @@
+
+GET http://localhost:8080/api/videos/
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/videos/add/
+
+
+###
+
+POST http://localhost:8080/api/videos/add/
+Content-Type: application/x-www-form-urlencoded
+
+name=newVideo&url=https://www.youtube.com/embed/Qw9YfVS01NQ
+
+###
